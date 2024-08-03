@@ -15,6 +15,7 @@ export class Game extends Scene {
     msg_text: Phaser.GameObjects.Text;
 
     private enemies: Enemy[] = [];
+    private player: Player;
 
     private readonly ZOMBIE_SPAWN_BOX: IPathNode = {
         x: 515,
@@ -121,6 +122,10 @@ export class Game extends Scene {
             'background'
         );
 
+        this.events.on('enemyHitPlayer', () => {
+            this.player.takeDamage(1);
+        });
+
         this.input.setDefaultCursor('none');
 
         this.createPlayer();
@@ -129,6 +134,8 @@ export class Game extends Scene {
     }
 
     update() {
+        this.checkGameOver();
+
         this.destroyEnemies();
 
         this.enemies.forEach((enemy) => {
@@ -140,8 +147,15 @@ export class Game extends Scene {
         this.executeSpawn();
     }
 
+    private checkGameOver() {
+        if (this.player.isDead()) {
+            this.scene.stop();
+            this.scene.start('GameOver');
+        }
+    }
+
     private createPlayer() {
-        const player = new Player(this, 300, 300);
+        this.player = new Player(this, 300, 300);
     }
 
     private moveEnemies() {
@@ -206,9 +220,5 @@ export class Game extends Scene {
             });
             i++;
         }
-
-        this.input.once('pointerdown', () => {
-            this.scene.start('GameOver');
-        });
     }
 }

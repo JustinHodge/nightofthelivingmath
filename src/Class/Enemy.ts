@@ -120,6 +120,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     public update() {
         this.speechBubble.x = this.x + this.SPEECH_BUBBLE_OFFSET.x;
         this.speechBubble.y = this.y + this.SPEECH_BUBBLE_OFFSET.y;
+
+        if (this.path.length <= 0) {
+            this.markAsDead();
+            this.scene.events.emit('enemyHitPlayer');
+        }
     }
 
     private setFacingDirection(deltaAngle: number) {

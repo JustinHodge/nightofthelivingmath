@@ -3,6 +3,7 @@ import { Enemy } from './Enemy';
 export class Player extends Phaser.Physics.Arcade.Sprite {
     private maxHealth = 16;
     private health = this.maxHealth;
+    private healthOrbs: Phaser.GameObjects.Image[] = [];
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'crosshair1');
@@ -16,14 +17,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             }
         );
 
-        for (let i = 0; i < Math.ceil(this.maxHealth / 4); i++) {
-            const healthImage = 'health' + Math.min(this.health - i * 4, 4);
-            const healthImageSize = 64;
-            scene.add
-                .sprite(10, i * healthImageSize, healthImage)
-                .setOrigin(0, 0)
-                .setDepth(100);
-        }
+        this.setHealthOrbs();
+
         scene.input.on(
             'gameobjectdown',
             (pointer: Phaser.Input.Pointer, gameObject: Enemy) => {
@@ -34,6 +29,38 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.createAnims();
         this.play('idle');
+    }
+
+    public isDead() {
+        return this.health <= 0;
+    }
+
+    public takeDamage(damage: number) {
+        this.health = Math.max(this.health - damage, 0);
+        this.setHealthOrbs();
+    }
+
+    private setHealthOrbs() {
+        for (const healthOrb of this.healthOrbs) {
+            healthOrb.destroy();
+        }
+
+        this.healthOrbs = [];
+
+        for (let i = 0; i < Math.ceil(this.maxHealth / 4); i++) {
+            const healthInThisOrb = this.health - i * 4;
+            const imageNumber =
+                healthInThisOrb >= 0 ? Math.min(healthInThisOrb, 4) : 0;
+            const healthImage = 'health' + imageNumber;
+            console.log(healthImage);
+            const healthImageSize = 64;
+            const newOrb = this.scene.add
+                .sprite(10, i * healthImageSize, healthImage)
+                .setOrigin(0, 0)
+                .setDepth(100);
+
+            this.healthOrbs.push(newOrb);
+        }
     }
 
     private createAnims() {
