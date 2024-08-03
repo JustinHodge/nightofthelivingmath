@@ -119,6 +119,8 @@ export class Game extends Scene {
             gameSize.middleY,
             'background'
         );
+        // TODO remove this
+        this.executeSpawn(true);
 
         this.DEBUG_MODE && this.debugSetup();
     }
@@ -128,9 +130,9 @@ export class Game extends Scene {
             enemy.update();
         });
 
-        this.moveEnemies();
+        // this.moveEnemies();
 
-        this.executeSpawn();
+        // this.executeSpawn();
     }
 
     private moveEnemies() {
@@ -145,10 +147,10 @@ export class Game extends Scene {
         }
     }
 
-    private executeSpawn() {
+    private executeSpawn(forceSpawn = false) {
         const shouldSpawn = Math.floor(Math.random() * 100) === 0;
 
-        if (shouldSpawn) {
+        if (forceSpawn || shouldSpawn) {
             const enemySpawnCoords = {
                 x:
                     this.ZOMBIE_SPAWN_BOX.x +
