@@ -120,26 +120,6 @@ export class Game extends Scene {
             'background'
         );
 
-        const enemySpawnCoords = {
-            x:
-                this.ZOMBIE_SPAWN_BOX.x +
-                Math.floor(Math.random() * this.ZOMBIE_SPAWN_BOX.width),
-            y:
-                this.ZOMBIE_SPAWN_BOX.y +
-                Math.floor(Math.random() * this.ZOMBIE_SPAWN_BOX.height),
-        };
-        const testEnemy = new Enemy({
-            scene: this,
-            x: enemySpawnCoords.x,
-            y: enemySpawnCoords.y,
-            key: 'atlas',
-            frame: 'Big Zombie Walking Animation Frames/Zombie-Tileset---_0412',
-        });
-
-        testEnemy.setPath(this.PATH_NODES);
-
-        this.enemies.push(testEnemy);
-
         this.DEBUG_MODE && this.debugSetup();
     }
 
@@ -150,19 +130,31 @@ export class Game extends Scene {
                 y: 10,
             };
 
-            this.physics.moveTo(enemy, targetX, targetY, 100);
+            this.physics.moveTo(enemy, targetX, targetY);
             enemy.updateNextPathNode();
         }
-        // const shouldSpawn = Math.floor(Math.random() * 100) === 0;
-        // if (shouldSpawn) {
-        //     console.log(`spawned - update: ${time}, ${delta}`);
-        //     this.add.sprite(
-        //         gameSize.middleX + 15,
-        //         50,
-        //         'atlas',
-        //         'Big Zombie Walking Animation Frames/Zombie-Tileset---_0412'
-        //     );
-        // }
+        const shouldSpawn = Math.floor(Math.random() * 100) === 0;
+        if (shouldSpawn) {
+            const enemySpawnCoords = {
+                x:
+                    this.ZOMBIE_SPAWN_BOX.x +
+                    Math.floor(Math.random() * this.ZOMBIE_SPAWN_BOX.width),
+                y:
+                    this.ZOMBIE_SPAWN_BOX.y +
+                    Math.floor(Math.random() * this.ZOMBIE_SPAWN_BOX.height),
+            };
+            const newEnemy = new Enemy({
+                scene: this,
+                x: enemySpawnCoords.x,
+                y: enemySpawnCoords.y,
+                key: 'atlas',
+                frame: 'Big Zombie Walking Animation Frames/Zombie-Tileset---_0412',
+            });
+
+            newEnemy.setPath(this.PATH_NODES);
+
+            this.enemies.push(newEnemy);
+        }
     }
 
     private debugSetup() {
