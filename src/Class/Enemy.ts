@@ -53,6 +53,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         );
         this.speechBubble.isStroked = true;
         this.speechBubble.strokeColor = 0x000000;
+
+        this.setAnimation(this.facingDirection);
     }
 
     public setPath(pathNodes: IPathNode[]) {
@@ -78,17 +80,18 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         if (deltaX <= 1 && deltaY <= 1) {
             this.path.shift();
-        }
+            if (this.path.length > 0) {
+                const deltaAngle = Phaser.Math.Angle.BetweenPoints(
+                    { x: this.x, y: this.y },
+                    { x: this.path[0].x, y: this.path[0].y }
+                );
 
-        if (this.path.length > 0) {
-            const deltaAngle = Phaser.Math.Angle.BetweenPoints(
-                { x: this.x, y: this.y },
-                { x: this.path[0].x, y: this.path[0].y }
-            );
-
-            this.setFacingDirection(
-                Phaser.Math.RadToDeg(Phaser.Math.Angle.Normalize(deltaAngle))
-            );
+                this.setFacingDirection(
+                    Phaser.Math.RadToDeg(
+                        Phaser.Math.Angle.Normalize(deltaAngle)
+                    )
+                );
+            }
         }
     }
 
@@ -113,8 +116,6 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         if (deltaAngle > 225 && deltaAngle < 315) {
             this.facingDirection = 'up';
         }
-
-        console.log(deltaAngle, ':', this.facingDirection);
 
         this.setAnimation(this.facingDirection);
     }
