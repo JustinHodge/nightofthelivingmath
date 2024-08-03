@@ -15,14 +15,14 @@ export class Game extends Scene {
 
     private enemies: Enemy[] = [];
 
-    ZOMBIE_SPAWN_BOX: IPathNode = {
+    private readonly ZOMBIE_SPAWN_BOX: IPathNode = {
         x: 515,
         y: 0,
         width: 42,
         height: 42,
     };
 
-    ZOMBIE_TARGET_BOX: IPathNode = {
+    private readonly ZOMBIE_TARGET_BOX: IPathNode = {
         x: 515,
         y: gameSize.height - 42,
         width: 42,
@@ -123,7 +123,17 @@ export class Game extends Scene {
         this.DEBUG_MODE && this.debugSetup();
     }
 
-    update(time: number, delta: number) {
+    update() {
+        this.enemies.forEach((enemy) => {
+            enemy.update();
+        });
+
+        this.moveEnemies();
+
+        this.executeSpawn();
+    }
+
+    private moveEnemies() {
         for (const enemy of this.enemies) {
             const { x: targetX, y: targetY } = enemy.getNextPathNode() ?? {
                 x: 10,
@@ -133,7 +143,11 @@ export class Game extends Scene {
             this.physics.moveTo(enemy, targetX, targetY);
             enemy.updateNextPathNode();
         }
+    }
+
+    private executeSpawn() {
         const shouldSpawn = Math.floor(Math.random() * 100) === 0;
+
         if (shouldSpawn) {
             const enemySpawnCoords = {
                 x:
@@ -143,6 +157,7 @@ export class Game extends Scene {
                     this.ZOMBIE_SPAWN_BOX.y +
                     Math.floor(Math.random() * this.ZOMBIE_SPAWN_BOX.height),
             };
+
             const newEnemy = new Enemy({
                 scene: this,
                 x: enemySpawnCoords.x,

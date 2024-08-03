@@ -18,9 +18,8 @@ interface ICoordinate {
 export class Enemy extends Phaser.Physics.Arcade.Sprite {
     private path: ICoordinate[] = [];
     private speechBubble;
-    private currentLocation: ICoordinate;
-    private readonly MOVE_SPEED = 5;
     private facingDirection: 'up' | 'down' | 'left' | 'right' = 'down';
+    private readonly SPEECH_BUBBLE_OFFSET = { x: 30, y: -25 };
 
     constructor({
         scene,
@@ -33,19 +32,24 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         scene.physics.world.enableBody(this, 0);
 
-        this.currentLocation = { x, y };
-
         this.createAnims();
 
         scene.add.existing(this);
 
+        const bubbleWidth = 50;
+        const bubbleHeight = 30;
+        const bubbleX = x + this.SPEECH_BUBBLE_OFFSET.x;
+        const bubbleY = y + this.SPEECH_BUBBLE_OFFSET.y;
+        const bubbleColor = 0xffffff;
+        const bubbleAlpha = 0.5;
+
         this.speechBubble = scene.add.rectangle(
-            x + 30,
-            y - 25,
-            50,
-            30,
-            0xffffff,
-            0.5
+            bubbleX,
+            bubbleY,
+            bubbleWidth,
+            bubbleHeight,
+            bubbleColor,
+            bubbleAlpha
         );
         this.speechBubble.isStroked = true;
         this.speechBubble.strokeColor = 0x000000;
@@ -76,6 +80,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         if (deltaX <= 1 && deltaY <= 1) {
             this.path.shift();
         }
+    }
+
+    public update() {
+        this.speechBubble.x = this.x + this.SPEECH_BUBBLE_OFFSET.x;
+        this.speechBubble.y = this.y + this.SPEECH_BUBBLE_OFFSET.y;
     }
 
     private setFacingDirection({
