@@ -54,6 +54,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         );
         this.speechBubble.isStroked = true;
         this.speechBubble.strokeColor = 0x000000;
+        this.setScale(2);
 
         this.setAnimation(this.facingDirection);
         this.setInteractive();
