@@ -20,6 +20,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     private speechBubble;
     private facingDirection: 'up' | 'down' | 'left' | 'right' = 'down';
     private readonly SPEECH_BUBBLE_OFFSET = { x: 30, y: -25 };
+    private isDead = false;
 
     constructor({
         scene,
@@ -55,6 +56,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.speechBubble.strokeColor = 0x000000;
 
         this.setAnimation(this.facingDirection);
+        this.setInteractive();
     }
 
     public setPath(pathNodes: IPathNode[]) {
@@ -68,6 +70,19 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
             this.path.push(nextCoord);
         }
+    }
+
+    public markAsDead() {
+        this.isDead = true;
+    }
+
+    public isAlive() {
+        if (this.isDead) {
+            this.speechBubble.destroy();
+            this.destroy();
+        }
+
+        return !this.isDead;
     }
 
     public getNextPathNode() {

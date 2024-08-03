@@ -124,20 +124,20 @@ export class Game extends Scene {
         this.input.setDefaultCursor('none');
 
         this.createPlayer();
-        // TODO remove this
-        this.executeSpawn(true);
 
         this.DEBUG_MODE && this.debugSetup();
     }
 
     update() {
+        this.destroyEnemies();
+
         this.enemies.forEach((enemy) => {
             enemy.update();
         });
 
-        // this.moveEnemies();
+        this.moveEnemies();
 
-        // this.executeSpawn();
+        this.executeSpawn();
     }
 
     private createPlayer() {
@@ -146,6 +146,10 @@ export class Game extends Scene {
 
     private moveEnemies() {
         for (const enemy of this.enemies) {
+            if (!enemy.isAlive()) {
+                continue;
+            }
+
             const { x: targetX, y: targetY } = enemy.getNextPathNode() ?? {
                 x: 10,
                 y: 10,
@@ -154,6 +158,10 @@ export class Game extends Scene {
             this.physics.moveTo(enemy, targetX, targetY);
             enemy.updateNextPathNode();
         }
+    }
+
+    private destroyEnemies() {
+        this.enemies = this.enemies.filter((enemy) => enemy.isAlive());
     }
 
     private executeSpawn(forceSpawn = false) {

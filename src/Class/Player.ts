@@ -22,9 +22,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
                 .setOrigin(0, 0)
                 .setDepth(100);
         }
-
-        scene.input.on('pointerdown', () => {
-            this.play('miss').chain('idle');
+        scene.input.on('gameobjectdown', (pointer, gameObject) => {
+            this.play('hit').chain('idle');
+            gameObject.markAsDead();
         });
 
         this.createAnims();
