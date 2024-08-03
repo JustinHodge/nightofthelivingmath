@@ -1,9 +1,12 @@
+import { gameSize } from '../main';
 import { Enemy } from './Enemy';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
     private maxHealth = 16;
     private health = this.maxHealth;
     private healthOrbs: Phaser.GameObjects.Image[] = [];
+    private currentScore = 0;
+    private scoreDisplay: Phaser.GameObjects.Text;
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'crosshair1');
@@ -17,18 +20,35 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             }
         );
 
+        this.scoreDisplay = scene.add.text(10, 5, 'Score: 0', {
+            fontSize: '20px',
+            backgroundColor: '#cccccccc',
+            padding: {
+                x: 10,
+                y: 5,
+            },
+            stroke: '#000000',
+            strokeThickness: 4,
+        });
+
         this.setHealthOrbs();
+        this.setScore();
 
         scene.input.on(
             'gameobjectdown',
             (pointer: Phaser.Input.Pointer, gameObject: Enemy) => {
                 this.play('hit').chain('idle');
-                gameObject.markAsDead();
+                this.scene.events.emit('playerHitEnemy', gameObject);
             }
         );
 
         this.createAnims();
         this.play('idle');
+    }
+
+    public addScore(score: number) {
+        this.currentScore += score;
+        this.setScore();
     }
 
     public isDead() {
@@ -38,6 +58,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     public takeDamage(damage: number) {
         this.health = Math.max(this.health - damage, 0);
         this.setHealthOrbs();
+    }
+
+    private setScore() {
+        this.scoreDisplay.setText('Score: ' + this.currentScore);
     }
 
     private setHealthOrbs() {
@@ -52,10 +76,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             const imageNumber =
                 healthInThisOrb >= 0 ? Math.min(healthInThisOrb, 4) : 0;
             const healthImage = 'health' + imageNumber;
-            console.log(healthImage);
             const healthImageSize = 64;
+
             const newOrb = this.scene.add
-                .sprite(10, i * healthImageSize, healthImage)
+                .sprite(gameSize.width - 75, i * healthImageSize, healthImage)
                 .setOrigin(0, 0)
                 .setDepth(100);
 

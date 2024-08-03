@@ -93,6 +93,10 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         return !this.isDead;
     }
 
+    public getScoreValue() {
+        return 100;
+    }
+
     public getNextPathNode() {
         return this.path[0];
     }
