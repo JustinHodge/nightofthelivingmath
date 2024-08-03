@@ -1,3 +1,5 @@
+import { Enemy } from './Enemy';
+
 export class Player extends Phaser.Physics.Arcade.Sprite {
     private maxHealth = 16;
     private health = this.maxHealth;
@@ -22,10 +24,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
                 .setOrigin(0, 0)
                 .setDepth(100);
         }
-        scene.input.on('gameobjectdown', (pointer, gameObject) => {
-            this.play('hit').chain('idle');
-            gameObject.markAsDead();
-        });
+        scene.input.on(
+            'gameobjectdown',
+            (pointer: Phaser.Input.Pointer, gameObject: Enemy) => {
+                this.play('hit').chain('idle');
+                gameObject.markAsDead();
+            }
+        );
 
         this.createAnims();
         this.play('idle');

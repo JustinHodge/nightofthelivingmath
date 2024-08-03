@@ -79,7 +79,14 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     public isAlive() {
         if (this.isDead) {
             this.speechBubble.destroy();
-            this.destroy();
+            this.play('death');
+            this.on(
+                'animationcomplete',
+                () => {
+                    this.destroy();
+                },
+                'death'
+            );
         }
 
         return !this.isDead;
@@ -193,6 +200,17 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
             }),
             frameRate: 5,
             repeat: -1,
+        });
+
+        this.anims.create({
+            key: 'death',
+            frames: this.anims.generateFrameNames('atlas', {
+                prefix: 'Damaged Big Zombie Animation Frames/Zombie-Tileset---_',
+                zeroPad: 4,
+                frames: [421, 422, 421, 422, 421, 422, 423],
+            }),
+            frameRate: 5,
+            repeat: 0,
         });
     }
 }
