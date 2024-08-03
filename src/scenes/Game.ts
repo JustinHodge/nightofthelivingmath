@@ -55,13 +55,13 @@ export class Game extends Scene {
             height: 42,
         },
         {
-            x: 82,
+            x: 898,
             y: 307,
             width: 42,
             height: 42,
         },
         {
-            x: 898,
+            x: 82,
             y: 307,
             width: 42,
             height: 42,
@@ -79,13 +79,13 @@ export class Game extends Scene {
             height: 42,
         },
         {
-            x: 82,
+            x: 898,
             y: 500,
             width: 42,
             height: 42,
         },
         {
-            x: 898,
+            x: 82,
             y: 500,
             width: 42,
             height: 42,
@@ -145,7 +145,13 @@ export class Game extends Scene {
 
     update(time: number, delta: number) {
         for (const enemy of this.enemies) {
-            enemy.move();
+            const { x: targetX, y: targetY } = enemy.getNextPathNode() ?? {
+                x: 10,
+                y: 10,
+            };
+
+            this.physics.moveTo(enemy, targetX, targetY, 100);
+            enemy.updateNextPathNode();
         }
         // const shouldSpawn = Math.floor(Math.random() * 100) === 0;
         // if (shouldSpawn) {
@@ -164,10 +170,15 @@ export class Game extends Scene {
             return;
         }
 
-        for (const turn of this.PATH_NODES) {
+        let i = 0;
+        for (const node of this.PATH_NODES) {
             this.add
-                .rectangle(turn.x, turn.y, turn.width, turn.height, 0x00ff00)
+                .rectangle(node.x, node.y, node.width, node.height, 0x00ff00)
                 .setOrigin(0, 0);
+            this.add.text(node.x, node.y, `${i}: (${node.x}, ${node.y})`, {
+                color: 'black',
+            });
+            i++;
         }
 
         this.input.once('pointerdown', () => {

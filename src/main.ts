@@ -26,6 +26,12 @@ const config: Types.Core.GameConfig = {
         autoCenter: Phaser.Scale.CENTER_BOTH,
     },
     scene: [Boot, Preloader, MainMenu, MainGame, GameOver],
+    physics: {
+        default: 'arcade',
+        arcade: {
+            debug: false,
+        },
+    },
 };
 
 export default new Game(config);

@@ -15,11 +15,12 @@ interface ICoordinate {
     y: number;
 }
 
-export class Enemy extends Phaser.GameObjects.Sprite {
+export class Enemy extends Phaser.Physics.Arcade.Sprite {
     private path: ICoordinate[] = [];
     private speechBubble;
     private currentLocation: ICoordinate;
     private readonly MOVE_SPEED = 5;
+    private facingDirection: 'up' | 'down' | 'left' | 'right' = 'down';
 
     constructor({
         scene,
@@ -29,6 +30,8 @@ export class Enemy extends Phaser.GameObjects.Sprite {
         frame = 'Big Zombie Walking Animation Frames/Zombie-Tileset---_0412',
     }: IConfig) {
         super(scene, x, y, key, frame);
+
+        scene.physics.world.enableBody(this, 0);
 
         this.currentLocation = { x, y };
 
@@ -61,32 +64,16 @@ export class Enemy extends Phaser.GameObjects.Sprite {
         }
     }
 
-    public move() {
-        if (!this.path.length) {
-            return;
-        }
+    public getNextPathNode() {
+        return this.path[0];
+    }
 
-        const { x: targetX, y: targetY } = this.path[0];
-        const { x: currentX, y: currentY } = this.currentLocation;
+    public updateNextPathNode() {
+        console.log(this.x, this.y);
+        const deltaX = Math.abs(this.path[0].x - this.x);
+        const deltaY = Math.abs(this.path[0].y - this.y);
 
-        const deltaX = targetX - currentX;
-        const deltaY = targetY - currentY;
-
-        this.setFacingDirection({ deltaX, deltaY });
-
-        this.currentLocation.x =
-            currentX + this.MOVE_SPEED <= targetX
-                ? currentX + this.MOVE_SPEED
-                : targetX;
-        this.currentLocation.y =
-            currentY + this.MOVE_SPEED <= targetY
-                ? currentY + this.MOVE_SPEED
-                : targetY;
-
-        console.log('setPosition');
-        this.setPosition(this.currentLocation.x, this.currentLocation.y);
-
-        if (currentX === targetX && currentY === targetY) {
+        if (deltaX <= 1 && deltaY <= 1) {
             this.path.shift();
         }
     }
@@ -100,17 +87,19 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     }) {
         if (Math.abs(deltaY) > Math.abs(deltaX)) {
             if (deltaY > 0) {
-                this.setAnimation('down');
+                this.facingDirection = 'down';
             } else {
-                this.setAnimation('up');
+                this.facingDirection = 'up';
             }
         } else {
             if (deltaX > 0) {
-                this.setAnimation('right');
+                this.facingDirection = 'right';
             } else {
-                this.setAnimation('left');
+                this.facingDirection = 'left';
             }
         }
+
+        this.setAnimation(this.facingDirection);
     }
 
     private setAnimation(direction: 'up' | 'down' | 'left' | 'right' | 'idle') {
