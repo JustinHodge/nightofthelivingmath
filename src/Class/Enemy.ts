@@ -73,12 +73,22 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     public updateNextPathNode() {
-        console.log(this.x, this.y);
         const deltaX = Math.abs(this.path[0].x - this.x);
         const deltaY = Math.abs(this.path[0].y - this.y);
 
         if (deltaX <= 1 && deltaY <= 1) {
             this.path.shift();
+        }
+
+        if (this.path.length > 0) {
+            const deltaAngle = Phaser.Math.Angle.BetweenPoints(
+                { x: this.x, y: this.y },
+                { x: this.path[0].x, y: this.path[0].y }
+            );
+
+            this.setFacingDirection(
+                Phaser.Math.RadToDeg(Phaser.Math.Angle.Normalize(deltaAngle))
+            );
         }
     }
 
@@ -87,26 +97,24 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.speechBubble.y = this.y + this.SPEECH_BUBBLE_OFFSET.y;
     }
 
-    private setFacingDirection({
-        deltaX,
-        deltaY,
-    }: {
-        deltaX: number;
-        deltaY: number;
-    }) {
-        if (Math.abs(deltaY) > Math.abs(deltaX)) {
-            if (deltaY > 0) {
-                this.facingDirection = 'down';
-            } else {
-                this.facingDirection = 'up';
-            }
-        } else {
-            if (deltaX > 0) {
-                this.facingDirection = 'right';
-            } else {
-                this.facingDirection = 'left';
-            }
+    private setFacingDirection(deltaAngle: number) {
+        if (deltaAngle > 315 || deltaAngle < 45) {
+            this.facingDirection = 'right';
         }
+
+        if (deltaAngle > 45 && deltaAngle < 135) {
+            this.facingDirection = 'down';
+        }
+
+        if (deltaAngle > 135 && deltaAngle < 225) {
+            this.facingDirection = 'left';
+        }
+
+        if (deltaAngle > 225 && deltaAngle < 315) {
+            this.facingDirection = 'up';
+        }
+
+        console.log(deltaAngle, ':', this.facingDirection);
 
         this.setAnimation(this.facingDirection);
     }
