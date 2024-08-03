@@ -1,6 +1,7 @@
 import { Scene } from 'phaser';
 import { gameSize } from '../main';
 import { Enemy } from '../Class/Enemy';
+import { Player } from '../Class/Player';
 
 export interface IPathNode {
     x: number;
@@ -119,6 +120,10 @@ export class Game extends Scene {
             gameSize.middleY,
             'background'
         );
+
+        this.input.setDefaultCursor('none');
+
+        this.createPlayer();
         // TODO remove this
         this.executeSpawn(true);
 
@@ -133,6 +138,10 @@ export class Game extends Scene {
         // this.moveEnemies();
 
         // this.executeSpawn();
+    }
+
+    private createPlayer() {
+        const player = new Player(this, 300, 300);
     }
 
     private moveEnemies() {
