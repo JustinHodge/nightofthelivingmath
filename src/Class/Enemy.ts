@@ -1,6 +1,10 @@
 import { IPathNode } from '../scenes/Game';
+import { Equation } from './Equation';
 
-interface IOptions extends Phaser.Types.Physics.Matter.MatterBodyConfig {}
+interface IOptions extends Phaser.Types.Physics.Matter.MatterBodyConfig {
+    equation: Equation;
+}
+
 interface IConfig {
     scene: Phaser.Scene;
     x: number;
@@ -19,7 +23,6 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     private path: ICoordinate[] = [];
     private speechBubble;
     private facingDirection: 'up' | 'down' | 'left' | 'right' = 'down';
-    private readonly SPEECH_BUBBLE_OFFSET = { x: 30, y: -25 };
     private isDead = false;
 
     constructor({
@@ -28,6 +31,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         y,
         key = 'atlas',
         frame = 'Big Zombie Walking Animation Frames/Zombie-Tileset---_0412',
+        options,
     }: IConfig) {
         super(scene, x, y, key, frame);
 
@@ -37,24 +41,39 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         scene.add.existing(this);
 
-        const bubbleWidth = 50;
-        const bubbleHeight = 30;
-        const bubbleX = x + this.SPEECH_BUBBLE_OFFSET.x;
-        const bubbleY = y + this.SPEECH_BUBBLE_OFFSET.y;
-        const bubbleColor = 0xffffff;
-        const bubbleAlpha = 0.5;
+        const bubbleXPadding = 1;
+        const bubbleYPadding = 1;
+        const bubbleX = x - this.width / 2;
+        const bubbleY = y - this.height / 2;
+        const bubbleColor = '#ffffff';
+        const bubbleAlpha = '99';
 
-        this.speechBubble = scene.add.rectangle(
+        const enemySpeechBubbleText = options?.equation.getVisibleEquation();
+        this.speechBubble = scene.add.text(
             bubbleX,
             bubbleY,
-            bubbleWidth,
-            bubbleHeight,
-            bubbleColor,
-            bubbleAlpha
+            enemySpeechBubbleText ?? 'FREEBIE',
+            {
+                padding: {
+                    x: bubbleXPadding,
+                    y: bubbleYPadding,
+                },
+                backgroundColor: bubbleColor + bubbleAlpha,
+                color: '#000000',
+                fontSize: '1.5rem',
+                align: 'center',
+                shadow: {
+                    offsetX: 2,
+                    offsetY: 2,
+                    blur: 2,
+                    color: '#000000',
+                    fill: true,
+                    stroke: true,
+                },
+            }
         );
-        this.speechBubble.isStroked = true;
-        this.speechBubble.strokeColor = 0x000000;
-        this.setScale(2);
+
+        this.setScale(3);
 
         this.setAnimation(this.facingDirection);
         this.setInteractive();
@@ -123,8 +142,10 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     public update() {
-        this.speechBubble.x = this.x + this.SPEECH_BUBBLE_OFFSET.x;
-        this.speechBubble.y = this.y + this.SPEECH_BUBBLE_OFFSET.y;
+        this.speechBubble.x =
+            this.x + this.width / 2 - this.speechBubble.width / 2;
+        this.speechBubble.y =
+            this.y + this.height / 2 + this.speechBubble.height / 2;
 
         if (this.path.length <= 0) {
             this.markAsDead();

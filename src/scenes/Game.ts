@@ -2,6 +2,7 @@ import { Scene } from 'phaser';
 import { gameSize } from '../main';
 import { Enemy } from '../Class/Enemy';
 import { Player } from '../Class/Player';
+import { Equation, TOperator } from '../Class/Equation';
 
 export interface IPathNode {
     x: number;
@@ -16,6 +17,7 @@ export class Game extends Scene {
 
     private enemies: Enemy[] = [];
     private player: Player;
+    private invisibleEquationElements: (number | TOperator)[] = [];
 
     private readonly ZOMBIE_SPAWN_BOX: IPathNode = {
         x: 515,
@@ -197,12 +199,20 @@ export class Game extends Scene {
                     Math.floor(Math.random() * this.ZOMBIE_SPAWN_BOX.height),
             };
 
+            const enemyEquation = new Equation(2);
+            this.invisibleEquationElements.push(
+                enemyEquation.getInvisibleElement()
+            );
+
             const newEnemy = new Enemy({
                 scene: this,
                 x: enemySpawnCoords.x,
                 y: enemySpawnCoords.y,
                 key: 'atlas',
                 frame: 'Big Zombie Walking Animation Frames/Zombie-Tileset---_0412',
+                options: {
+                    equation: enemyEquation,
+                },
             });
 
             newEnemy.setPath(this.PATH_NODES);
