@@ -10,7 +10,22 @@ export class MainMenu extends Scene {
     }
 
     create() {
-        this.background = this.add.image(512, 384, 'background');
+        this.background = this.add
+            .image(512, 384, 'background')
+            .setTint(0xdddddd)
+            .setAlpha(0.7);
+
+        this.add
+            .rectangle(
+                this.game.canvas.width / 2,
+                this.game.canvas.height / 2,
+                600,
+                600,
+                0xcccccc,
+                0.5
+            )
+            .setOrigin(0.5, 0.5)
+            .setStrokeStyle(3, 0x000000);
 
         this.logo = this.add.image(512, 300, 'logo');
 
@@ -68,22 +83,18 @@ export class MainMenu extends Scene {
             gameSelector.once(
                 'pointerdown',
                 (pointer: Phaser.Input.Pointer) => {
-                    this.registry.set('difficulty', difficulty);
+                    // this.registry.set('difficulty', difficulty);
                     this.scene.start('Game');
                 }
             );
 
             gameSelector.on('pointerover', (pointer: Phaser.Input.Pointer) => {
-                gameSelector.setTint(0x0000ff);
+                gameSelector.setTint(0xa60000);
             });
 
             gameSelector.on('pointerout', (pointer: Phaser.Input.Pointer) => {
                 gameSelector.clearTint();
             });
         }
-
-        // this.input.once('pointerdown', () => {
-        //     this.scene.start('Game');
-        // });
     }
 }

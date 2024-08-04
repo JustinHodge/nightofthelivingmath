@@ -21,104 +21,16 @@ export class Game extends Scene {
     private currentEquationElement: number | TOperator;
     private currentEquationElementDisplay: Phaser.GameObjects.Text;
 
-    private readonly ZOMBIE_SPAWN_BOX: IPathNode = {
-        x: 515,
-        y: 0,
-        width: 42,
-        height: 42,
-    };
-
-    private readonly ZOMBIE_TARGET_BOX: IPathNode = {
-        x: 515,
-        y: gameSize.height - 42,
-        width: 42,
-        height: 42,
-    };
-
-    PATH_NODES: IPathNode[] = [
-        {
-            x: 515,
-            y: 115,
-            width: 42,
-            height: 42,
-        },
-        {
-            x: 82,
-            y: 115,
-            width: 42,
-            height: 42,
-        },
-        {
-            x: 82,
-            y: 212,
-            width: 42,
-            height: 42,
-        },
-        {
-            x: 898,
-            y: 212,
-            width: 42,
-            height: 42,
-        },
-        {
-            x: 898,
-            y: 307,
-            width: 42,
-            height: 42,
-        },
-        {
-            x: 82,
-            y: 307,
-            width: 42,
-            height: 42,
-        },
-        {
-            x: 82,
-            y: 403,
-            width: 42,
-            height: 42,
-        },
-        {
-            x: 898,
-            y: 403,
-            width: 42,
-            height: 42,
-        },
-        {
-            x: 898,
-            y: 500,
-            width: 42,
-            height: 42,
-        },
-        {
-            x: 82,
-            y: 500,
-            width: 42,
-            height: 42,
-        },
-        {
-            x: 82,
-            y: 596,
-            width: 42,
-            height: 42,
-        },
-        {
-            x: 515,
-            y: 596,
-            width: 42,
-            height: 42,
-        },
-        this.ZOMBIE_TARGET_BOX,
-    ];
-
-    DEBUG_MODE = false;
+    // private readonly PATH_NODES: IPathNode[] = this.cache.json.get('pathNodes');
+    private readonly PATH_NODES: IPathNode[] = [];
+    private readonly ZOMBIE_SPAWN_BOX = this.PATH_NODES[0];
+    // private readonly DIFFICULTY = this.registry.get('difficulty');
 
     constructor() {
         super('Game');
     }
 
     create() {
-        console.log(this.registry.get('difficulty'));
         this.camera = this.cameras.main;
 
         this.background = this.add.image(
@@ -127,6 +39,41 @@ export class Game extends Scene {
             'background'
         );
 
+        this.createPlayer();
+    }
+
+    update() {
+        this.checkGameOver();
+
+        this.destroyEnemies();
+
+        this.enemies.forEach((enemy) => {
+            enemy.update();
+        });
+
+        this.player.update();
+
+        this.moveEnemies();
+
+        this.executeSpawn();
+    }
+
+    private checkGameOver() {
+        if (this.player.isDead()) {
+            this.scene.stop();
+            this.scene.start('GameOver');
+        }
+    }
+
+    private createPlayer() {
+        this.player = new Player(this, 300, 300);
+
+        this.input.setDefaultCursor('none');
+
+        this.events.on('enemyHitPlayer', () => {
+            this.player.takeDamage(1);
+        });
+
         this.events.on('playerHitEnemy', (enemy: Enemy) => {
             enemy.attemptMarkAsDead(this.currentEquationElement);
             if (!enemy.removeIfMarkedDead()) {
@@ -134,14 +81,6 @@ export class Game extends Scene {
             }
             this.player.addScore(enemy.getScoreValue());
         });
-
-        this.events.on('enemyHitPlayer', () => {
-            this.player.takeDamage(1);
-        });
-
-        this.input.setDefaultCursor('none');
-
-        this.createPlayer();
 
         this.currentEquationElementDisplay = this.add.text(
             500,
@@ -158,33 +97,6 @@ export class Game extends Scene {
                 strokeThickness: 4,
             }
         );
-
-        this.DEBUG_MODE && this.debugSetup();
-    }
-
-    update() {
-        this.checkGameOver();
-
-        this.destroyEnemies();
-
-        this.enemies.forEach((enemy) => {
-            enemy.update();
-        });
-
-        this.moveEnemies();
-
-        this.executeSpawn();
-    }
-
-    private checkGameOver() {
-        if (this.player.isDead()) {
-            this.scene.stop();
-            this.scene.start('GameOver');
-        }
-    }
-
-    private createPlayer() {
-        this.player = new Player(this, 300, 300);
     }
 
     private moveEnemies() {
@@ -249,23 +161,6 @@ export class Game extends Scene {
             newEnemy.setPath(this.PATH_NODES);
 
             this.enemies.push(newEnemy);
-        }
-    }
-
-    private debugSetup() {
-        if (!this.DEBUG_MODE) {
-            return;
-        }
-
-        let i = 0;
-        for (const node of this.PATH_NODES) {
-            this.add
-                .rectangle(node.x, node.y, node.width, node.height, 0x00ff00)
-                .setOrigin(0, 0);
-            this.add.text(node.x, node.y, `${i}: (${node.x}, ${node.y})`, {
-                color: 'black',
-            });
-            i++;
         }
     }
 }

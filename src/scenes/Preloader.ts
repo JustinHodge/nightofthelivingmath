@@ -26,6 +26,7 @@ export class Preloader extends Scene {
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
         this.load.image('logo', 'logo.png');
+        this.load.json('mapNodes', 'nightofthelivingmathmap.json');
         this.load.emit('progress', 0.3);
 
         this.load.image('sprite-sheet', 'atlas.png');
