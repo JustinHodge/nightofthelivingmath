@@ -1,5 +1,11 @@
 import { Scene, GameObjects } from 'phaser';
 
+export type TDifficulty = {
+    label: string;
+    difficultyNumber: number;
+    description: string;
+};
+
 export class MainMenu extends Scene {
     background: GameObjects.Image;
     logo: GameObjects.Image;
@@ -10,6 +16,7 @@ export class MainMenu extends Scene {
     }
 
     create() {
+        this.input.setDefaultCursor('auto');
         this.background = this.add
             .image(512, 384, 'background')
             .setTint(0xdddddd)
@@ -29,7 +36,7 @@ export class MainMenu extends Scene {
 
         this.logo = this.add.image(512, 300, 'logo');
 
-        const difficulties = [
+        const difficulties: TDifficulty[] = [
             {
                 label: 'Beginner',
                 difficultyNumber: 1,
@@ -83,7 +90,7 @@ export class MainMenu extends Scene {
             gameSelector.once(
                 'pointerdown',
                 (pointer: Phaser.Input.Pointer) => {
-                    // this.registry.set('difficulty', difficulty);
+                    this.registry.set('difficulty', difficulty);
                     this.scene.start('Game');
                 }
             );

@@ -3,6 +3,7 @@ import { gameSize } from '../main';
 import { Enemy } from '../Class/Enemy';
 import { Player } from '../Class/Player';
 import { Equation, TOperator } from '../Class/Equation';
+import { TDifficulty } from './MainMenu';
 
 export interface IPathNode {
     x: number;
@@ -21,16 +22,20 @@ export class Game extends Scene {
     private currentEquationElement: number | TOperator;
     private currentEquationElementDisplay: Phaser.GameObjects.Text;
 
-    // private readonly PATH_NODES: IPathNode[] = this.cache.json.get('pathNodes');
-    private readonly PATH_NODES: IPathNode[] = [];
-    private readonly ZOMBIE_SPAWN_BOX = this.PATH_NODES[0];
-    // private readonly DIFFICULTY = this.registry.get('difficulty');
+    private PATH_NODES: IPathNode[];
+    // private readonly PATH_NODES: IPathNode[] = [];
+    private ZOMBIE_SPAWN_BOX: IPathNode;
+    private DIFFICULTY: TDifficulty;
 
     constructor() {
         super('Game');
     }
 
     create() {
+        this.PATH_NODES = this.cache.json.get('mapNodes');
+        this.ZOMBIE_SPAWN_BOX = this.PATH_NODES[0];
+        this.DIFFICULTY = this.registry.get('difficulty');
+
         this.camera = this.cameras.main;
 
         this.background = this.add.image(
@@ -60,7 +65,8 @@ export class Game extends Scene {
 
     private checkGameOver() {
         if (this.player.isDead()) {
-            this.scene.stop();
+            this.enemies = [];
+            this.scene.stop('Game');
             this.scene.start('GameOver');
         }
     }
