@@ -1,5 +1,5 @@
 import { IPathNode } from '../scenes/Game';
-import { Equation } from './Equation';
+import { Equation, TOperator } from './Equation';
 
 interface IOptions extends Phaser.Types.Physics.Matter.MatterBodyConfig {
     equation: Equation;
@@ -24,6 +24,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     private speechBubble;
     private facingDirection: 'up' | 'down' | 'left' | 'right' = 'down';
     private isDead = false;
+    private equation: Equation | undefined;
 
     constructor({
         scene,
@@ -49,6 +50,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         const bubbleAlpha = '99';
 
         const enemySpeechBubbleText = options?.equation.getVisibleEquation();
+        this.equation = options?.equation;
         this.speechBubble = scene.add.text(
             bubbleX,
             bubbleY,
@@ -92,11 +94,19 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    public markAsDead() {
-        this.isDead = true;
+    public attemptMarkAsDead(
+        equationComponent: number | TOperator | undefined
+    ) {
+        if (!this.equation) {
+            this.isDead = true;
+        }
+
+        if (this.equation?.getInvisibleElement() === equationComponent) {
+            this.isDead = true;
+        }
     }
 
-    public isAlive() {
+    public removeIfMarkedDead() {
         if (this.isDead) {
             this.speechBubble.destroy();
             this.play('death');
@@ -109,6 +119,10 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
             );
         }
 
+        return !this.isDead;
+    }
+
+    public isAlive() {
         return !this.isDead;
     }
 
@@ -148,7 +162,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.y + this.height / 2 + this.speechBubble.height / 2;
 
         if (this.path.length <= 0) {
-            this.markAsDead();
+            this.attemptMarkAsDead(this.equation?.getInvisibleElement());
             this.scene.events.emit('enemyHitPlayer');
         }
     }

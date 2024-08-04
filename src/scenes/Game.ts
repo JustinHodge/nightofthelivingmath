@@ -18,6 +18,8 @@ export class Game extends Scene {
     private enemies: Enemy[] = [];
     private player: Player;
     private invisibleEquationElements: (number | TOperator)[] = [];
+    private currentEquationElement: number | TOperator;
+    private currentEquationElementDisplay: Phaser.GameObjects.Text;
 
     private readonly ZOMBIE_SPAWN_BOX: IPathNode = {
         x: 515,
@@ -125,7 +127,10 @@ export class Game extends Scene {
         );
 
         this.events.on('playerHitEnemy', (enemy: Enemy) => {
-            enemy.markAsDead();
+            enemy.attemptMarkAsDead(this.currentEquationElement);
+            if (!enemy.removeIfMarkedDead()) {
+                return;
+            }
             this.player.addScore(enemy.getScoreValue());
         });
 
@@ -136,6 +141,22 @@ export class Game extends Scene {
         this.input.setDefaultCursor('none');
 
         this.createPlayer();
+
+        this.currentEquationElementDisplay = this.add.text(
+            500,
+            500,
+            '' + this.currentEquationElement,
+            {
+                fontSize: '20px',
+                backgroundColor: '#cccccccc',
+                padding: {
+                    x: 10,
+                    y: 5,
+                },
+                stroke: '#000000',
+                strokeThickness: 4,
+            }
+        );
 
         this.DEBUG_MODE && this.debugSetup();
     }
@@ -167,7 +188,7 @@ export class Game extends Scene {
 
     private moveEnemies() {
         for (const enemy of this.enemies) {
-            if (!enemy.isAlive()) {
+            if (!enemy.removeIfMarkedDead()) {
                 continue;
             }
 
@@ -182,7 +203,9 @@ export class Game extends Scene {
     }
 
     private destroyEnemies() {
-        this.enemies = this.enemies.filter((enemy) => enemy.isAlive());
+        this.enemies = this.enemies.filter((enemy) =>
+            enemy.removeIfMarkedDead()
+        );
     }
 
     private executeSpawn(forceSpawn = false) {
@@ -201,6 +224,14 @@ export class Game extends Scene {
             const enemyEquation = new Equation(2);
             this.invisibleEquationElements.push(
                 enemyEquation.getInvisibleElement()
+            );
+
+            this.currentEquationElement =
+                this.invisibleEquationElements[
+                    (Math.random() * this.invisibleEquationElements.length) | 0
+                ];
+            this.currentEquationElementDisplay.setText(
+                '' + this.currentEquationElement
             );
 
             const newEnemy = new Enemy({
