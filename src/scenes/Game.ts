@@ -125,7 +125,6 @@ export class Game extends Scene {
         );
 
         this.events.on('playerHitEnemy', (enemy: Enemy) => {
-            console.log('playerHitEnemy');
             enemy.markAsDead();
             this.player.addScore(enemy.getScoreValue());
         });
