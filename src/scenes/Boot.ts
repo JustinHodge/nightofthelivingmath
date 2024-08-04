@@ -11,14 +11,6 @@ export class Boot extends Scene {
 
         this.load.setPath('assets');
         this.load.image('background', 'nightofthelivingmathmap.png');
-        this.load.image('sprite-sheet', 'atlas.png');
-        this.load.atlas('atlas', 'atlas.png', 'atlas.json');
-        this.load.image('player-sprite-sheet', 'player-sprites.png');
-        this.load.atlas(
-            'player-sprites',
-            'player-sprites.png',
-            'player-sprites.json'
-        );
     }
 
     create() {
