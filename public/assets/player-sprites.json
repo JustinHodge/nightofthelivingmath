@@ -1,0 +1,272 @@
+{
+	"textures": [
+		{
+			"image": "player-sprites.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 420,
+				"h": 61
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "health/health0.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 5,
+						"w": 64,
+						"h": 56
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 64,
+						"h": 56
+					}
+				},
+				{
+					"filename": "health/health1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 5,
+						"w": 64,
+						"h": 56
+					},
+					"frame": {
+						"x": 67,
+						"y": 1,
+						"w": 64,
+						"h": 56
+					}
+				},
+				{
+					"filename": "health/health2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 5,
+						"w": 64,
+						"h": 56
+					},
+					"frame": {
+						"x": 133,
+						"y": 1,
+						"w": 64,
+						"h": 56
+					}
+				},
+				{
+					"filename": "health/health3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 5,
+						"w": 64,
+						"h": 56
+					},
+					"frame": {
+						"x": 199,
+						"y": 1,
+						"w": 64,
+						"h": 56
+					}
+				},
+				{
+					"filename": "health/health4.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 64,
+						"h": 64
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 5,
+						"w": 64,
+						"h": 56
+					},
+					"frame": {
+						"x": 265,
+						"y": 1,
+						"w": 64,
+						"h": 56
+					}
+				},
+				{
+					"filename": "crosshair/crosshair5.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 32,
+						"h": 32
+					},
+					"frame": {
+						"x": 331,
+						"y": 1,
+						"w": 32,
+						"h": 32
+					}
+				},
+				{
+					"filename": "crosshair/crosshair2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 3,
+						"w": 25,
+						"h": 25
+					},
+					"frame": {
+						"x": 331,
+						"y": 35,
+						"w": 25,
+						"h": 25
+					}
+				},
+				{
+					"filename": "crosshair/crosshair3.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 3,
+						"w": 25,
+						"h": 25
+					},
+					"frame": {
+						"x": 358,
+						"y": 35,
+						"w": 25,
+						"h": 25
+					}
+				},
+				{
+					"filename": "crosshair/crosshair4.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 3,
+						"w": 25,
+						"h": 25
+					},
+					"frame": {
+						"x": 365,
+						"y": 1,
+						"w": 25,
+						"h": 25
+					}
+				},
+				{
+					"filename": "crosshair/crosshairhit.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 5,
+						"w": 27,
+						"h": 21
+					},
+					"frame": {
+						"x": 392,
+						"y": 1,
+						"w": 27,
+						"h": 21
+					}
+				},
+				{
+					"filename": "crosshair/crosshairmiss.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 5,
+						"w": 27,
+						"h": 21
+					},
+					"frame": {
+						"x": 392,
+						"y": 24,
+						"w": 27,
+						"h": 21
+					}
+				},
+				{
+					"filename": "crosshair/crosshair1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 9,
+						"w": 13,
+						"h": 13
+					},
+					"frame": {
+						"x": 385,
+						"y": 47,
+						"w": 13,
+						"h": 13
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:2c5692374ae9c3bcd051a4163445fa65:1366cd066f38ec8ded344129f2c352d6:ec922cabdb5ad76aea8f2bbe701d0be9$"
+	}
+}

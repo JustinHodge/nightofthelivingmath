@@ -9,7 +9,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     private scoreDisplay: Phaser.GameObjects.Text;
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
-        super(scene, x, y, 'crosshair1');
+        super(scene, x, y, 'player-sprites', 'crosshair/crosshair1.png');
+        scene.physics.world.enableBody(this, 0);
         scene.add.existing(this);
         scene.input.on(
             'pointermove',
@@ -75,11 +76,16 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             const healthInThisOrb = this.health - i * 4;
             const imageNumber =
                 healthInThisOrb >= 0 ? Math.min(healthInThisOrb, 4) : 0;
-            const healthImage = 'health' + imageNumber;
+            const healthImage = 'health/health' + imageNumber + '.png';
             const healthImageSize = 64;
 
             const newOrb = this.scene.add
-                .sprite(gameSize.width - 75, i * healthImageSize, healthImage)
+                .sprite(
+                    gameSize.width - 75,
+                    i * healthImageSize,
+                    'player-sprites',
+                    healthImage
+                )
                 .setOrigin(0, 0)
                 .setDepth(100);
 
@@ -88,29 +94,31 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     private createAnims() {
-        const idleFrames: Phaser.Types.Animations.AnimationFrame[] = [
-            { key: 'crosshair3' },
-            { key: 'crosshair4' },
-            { key: 'crosshair5' },
-        ];
-
         this.anims.create({
             key: 'miss',
-            frames: [{ key: 'crosshairmiss' }],
+            frames: [
+                { key: 'player-sprites', frame: 'crosshair/crosshairmiss.png' },
+            ],
             frameRate: 3,
             repeat: 0,
         });
 
         this.anims.create({
             key: 'hit',
-            frames: [{ key: 'crosshairhit' }],
+            frames: [
+                { key: 'player-sprites', frame: 'crosshair/crosshairhit.png' },
+            ],
             frameRate: 3,
             repeat: 0,
         });
 
         this.anims.create({
             key: 'idle',
-            frames: idleFrames,
+            frames: this.anims.generateFrameNames('player-sprites', {
+                prefix: 'crosshair/crosshair',
+                suffix: '.png',
+                frames: [3, 4, 5],
+            }),
             frameRate: 1,
             repeat: -1,
         });
