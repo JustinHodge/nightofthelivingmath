@@ -118,6 +118,7 @@ export class Game extends Scene {
     }
 
     create() {
+        console.log(this.registry.get('difficulty'));
         this.camera = this.cameras.main;
 
         this.background = this.add.image(
