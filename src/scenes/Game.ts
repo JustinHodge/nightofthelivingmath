@@ -76,32 +76,60 @@ export class Game extends Scene {
 
         this.input.setDefaultCursor('none');
 
+        this.createEventHandlers();
+
+        this.displayCurrentEquationElement();
+    }
+
+    private createEventHandlers() {
         this.events.on('enemyHitPlayer', () => {
             this.player.takeDamage(1);
         });
 
         this.events.on('playerHitEnemy', (enemy: Enemy) => {
             enemy.attemptMarkAsDead(this.currentEquationElement);
-            if (!enemy.removeIfMarkedDead()) {
-                return;
+
+            if (enemy.removeIfMarkedDead()) {
+                this.player.addScore(enemy.getScoreValue());
+                this.deleteCurrentEquationElement();
             }
-            this.player.addScore(enemy.getScoreValue());
         });
 
-        this.currentEquationElementDisplay = this.add.text(
-            500,
-            500,
-            '' + this.currentEquationElement,
-            {
-                fontSize: '20px',
-                backgroundColor: '#cccccccc',
-                padding: {
-                    x: 10,
-                    y: 5,
-                },
-                stroke: '#000000',
-                strokeThickness: 4,
+        this.events.on('playerReload', () => {
+            this.updateCurrentEquationElement();
+        });
+    }
+
+    private deleteCurrentEquationElement() {
+        for (const element of this.invisibleEquationElements) {
+            if (element === this.currentEquationElement) {
+                this.invisibleEquationElements.splice(
+                    this.invisibleEquationElements.indexOf(element),
+                    1
+                );
+                break;
             }
+        }
+    }
+
+    private displayCurrentEquationElement() {
+        this.currentEquationElementDisplay = this.add.text(500, 500, '', {
+            fontSize: '20px',
+            backgroundColor: '#cccccccc',
+            padding: {
+                x: 10,
+                y: 5,
+            },
+            stroke: '#000000',
+            strokeThickness: 4,
+        });
+
+        this.updateEquationElementDisplay();
+    }
+
+    private updateEquationElementDisplay() {
+        this.currentEquationElementDisplay.setText(
+            '' + this.currentEquationElement
         );
     }
 
@@ -127,6 +155,19 @@ export class Game extends Scene {
         );
     }
 
+    private updateCurrentEquationElement() {
+        this.currentEquationElement =
+            this.invisibleEquationElements[
+                (Math.random() * this.invisibleEquationElements.length) | 0
+            ];
+
+        if (!this.currentEquationElement) {
+            return;
+        }
+
+        this.updateEquationElementDisplay();
+    }
+
     private executeSpawn(forceSpawn = false) {
         const shouldSpawn = Math.floor(Math.random() * 100) === 0;
 
@@ -145,26 +186,28 @@ export class Game extends Scene {
                 enemyEquation.getInvisibleElement()
             );
 
-            this.currentEquationElement =
-                this.invisibleEquationElements[
-                    (Math.random() * this.invisibleEquationElements.length) | 0
-                ];
-            this.currentEquationElementDisplay.setText(
-                '' + this.currentEquationElement
-            );
+            if (!this.currentEquationElement) {
+                this.updateCurrentEquationElement();
+            }
 
             const newEnemy = new Enemy({
                 scene: this,
-                x: enemySpawnCoords.x,
-                y: enemySpawnCoords.y,
-                key: 'atlas',
-                frame: 'Big Zombie Walking Animation Frames/Zombie-Tileset---_0412',
-                options: {
-                    equation: enemyEquation,
-                },
+                equation: enemyEquation,
+                path: this.PATH_NODES,
             });
 
-            newEnemy.setPath(this.PATH_NODES);
+            // const newEnemy = new Enemy({
+            //     scene: this,
+            //     x: enemySpawnCoords.x,
+            //     y: enemySpawnCoords.y,
+            //     key: 'atlas',
+            //     frame: 'Big Zombie Walking Animation Frames/Zombie-Tileset---_0412',
+            //     options: {
+            //         equation: enemyEquation,
+            //     },
+            // });
+
+            // newEnemy.setPath(this.PATH_NODES);
 
             this.enemies.push(newEnemy);
         }

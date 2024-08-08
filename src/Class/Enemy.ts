@@ -1,17 +1,10 @@
 import { IPathNode } from '../scenes/Game';
 import { Equation, TOperator } from './Equation';
 
-interface IOptions extends Phaser.Types.Physics.Matter.MatterBodyConfig {
-    equation: Equation;
-}
-
 interface IConfig {
     scene: Phaser.Scene;
-    x: number;
-    y: number;
-    key?: string;
-    frame?: string | number;
-    options?: IOptions;
+    path: IPathNode[];
+    equation: Equation;
 }
 
 interface ICoordinate {
@@ -21,37 +14,50 @@ interface ICoordinate {
 
 export class Enemy extends Phaser.Physics.Arcade.Sprite {
     private path: ICoordinate[] = [];
-    private speechBubble;
+    private speechBubble: Phaser.GameObjects.Text;
     private facingDirection: 'up' | 'down' | 'left' | 'right' = 'down';
     private isDead = false;
     private equation: Equation | undefined;
 
-    constructor({
-        scene,
-        x,
-        y,
-        key = 'atlas',
-        frame = 'Big Zombie Walking Animation Frames/Zombie-Tileset---_0412',
-        options,
-    }: IConfig) {
-        super(scene, x, y, key, frame);
+    constructor({ scene, path, equation }: IConfig) {
+        if (path.length < 1) {
+            throw new Error('Path must have at least one node');
+        }
+
+        const key = 'atlas';
+        const framePrefix =
+            'Big Zombie Walking Animation Frames/Zombie-Tileset---_';
+        const frame = framePrefix + '0412';
+
+        super(scene, path[0].x, path[0].y, key, frame);
 
         scene.physics.world.enableBody(this, 0);
 
         this.createAnims();
 
-        scene.add.existing(this);
+        this.equation = equation;
+        this.buildSpeechBubble();
 
+        this.setScale(3);
+        this.setPath(path);
+
+        this.setAnimation(this.facingDirection);
+        this.setInteractive();
+
+        scene.add.existing(this);
+    }
+
+    private buildSpeechBubble() {
         const bubbleXPadding = 1;
         const bubbleYPadding = 1;
-        const bubbleX = x - this.width / 2;
-        const bubbleY = y - this.height / 2;
+        const bubbleX = this.x - this.width / 2;
+        const bubbleY = this.y - this.height / 2;
         const bubbleColor = '#ffffff';
         const bubbleAlpha = '99';
 
-        const enemySpeechBubbleText = options?.equation.getVisibleEquation();
-        this.equation = options?.equation;
-        this.speechBubble = scene.add.text(
+        const enemySpeechBubbleText = this.equation?.getVisibleEquation() ?? '';
+
+        this.speechBubble = this.scene.add.text(
             bubbleX,
             bubbleY,
             enemySpeechBubbleText ?? 'FREEBIE',
@@ -74,14 +80,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
                 },
             }
         );
-
-        this.setScale(3);
-
-        this.setAnimation(this.facingDirection);
-        this.setInteractive();
     }
 
-    public setPath(pathNodes: IPathNode[]) {
+    private setPath(pathNodes: IPathNode[]) {
         this.path = [];
 
         for (const pathNode of pathNodes) {
