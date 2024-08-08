@@ -60,37 +60,36 @@ export class Equation {
     private generateEquation(difficulty: TDifficulty) {
         const operators = this.operatorsByDifficulty[difficulty];
 
-        // TODO: fix while loop
-        // while (
-        //     !Number.isInteger(this.num1) ||
-        //     !Number.isInteger(this.num2) ||
-        //     !Number.isInteger(this.result)
-        // ) {
-        this.num1 = {
-            value: Math.floor(Math.random() * 100),
-            visible: true,
-        };
-        this.operator = {
-            value: operators[Math.floor(Math.random() * operators.length)],
-            visible: true,
-        };
-        this.num2 = {
-            value: Math.floor(Math.random() * 100),
-            visible: true,
-        };
-        const testString =
-            '' + this.num1.value + this.operator.value + this.num2.value;
+        while (
+            !Number.isInteger(this.num1?.value) ||
+            !Number.isInteger(this.num2?.value) ||
+            !Number.isInteger(this.result?.value)
+        ) {
+            this.num1 = {
+                value: Math.floor(Math.random() * 100),
+                visible: true,
+            };
+            this.operator = {
+                value: operators[Math.floor(Math.random() * operators.length)],
+                visible: true,
+            };
+            this.num2 = {
+                value: Math.floor(Math.random() * 100),
+                visible: true,
+            };
+            const testString =
+                '' + this.num1.value + this.operator.value + this.num2.value;
 
-        this.result = {
-            value: eval(testString),
-            visible: true,
-        };
-        // }
+            this.result = {
+                value: eval(testString),
+                visible: true,
+            };
+        }
 
         const hidableElements = this.hidableElementMap[difficulty];
-        const whichElementShouldBeHidden =
+        this.hiddenComponent =
             hidableElements[Math.floor(Math.random() * hidableElements.length)];
-        this[whichElementShouldBeHidden].visible = false;
+        this[this.hiddenComponent].visible = false;
 
         this.buildVisibleString();
     }
