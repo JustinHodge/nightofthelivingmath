@@ -17,6 +17,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     private speechBubble: Phaser.GameObjects.Text;
     private facingDirection: 'up' | 'down' | 'left' | 'right' = 'down';
     private equation: Equation | undefined;
+    private isDead = false;
 
     constructor({ scene, path, equation }: IConfig) {
         if (path.length < 1) {
@@ -109,6 +110,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     private move() {
+        if (this.isDead) {
+            this.setVelocity(0, 0);
+            return;
+        }
+
         const { x: targetX, y: targetY } = this.getNextPathNode() ?? {
             x: 10,
             y: 10,
@@ -118,11 +124,12 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     private kill() {
-        this.speechBubble.destroy();
+        this.isDead = true;
         this.play('death');
         this.on(
             'animationcomplete',
             () => {
+                this.speechBubble.destroy();
                 this.destroy();
             },
             'death'
