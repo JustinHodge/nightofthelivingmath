@@ -16,7 +16,6 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     private path: ICoordinate[] = [];
     private speechBubble: Phaser.GameObjects.Text;
     private facingDirection: 'up' | 'down' | 'left' | 'right' = 'down';
-    private isDead = false;
     private equation: Equation | undefined;
 
     constructor({ scene, path, equation }: IConfig) {
@@ -95,36 +94,39 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    public attemptMarkAsDead(
-        equationComponent: number | TOperator | undefined
-    ) {
-        if (!this.equation) {
-            this.isDead = true;
+    public attemptKill(equationComponent: number | TOperator | undefined) {
+        if (
+            !this.equation ||
+            this.equation?.getInvisibleElement() === equationComponent
+        ) {
+            this.kill();
+            this.scene.events.emit('playerKilledEnemy', {
+                score: this.getScoreValue(),
+            });
         }
 
-        if (this.equation?.getInvisibleElement() === equationComponent) {
-            this.isDead = true;
-        }
+        return false;
     }
 
-    public removeIfMarkedDead() {
-        if (this.isDead) {
-            this.speechBubble.destroy();
-            this.play('death');
-            this.on(
-                'animationcomplete',
-                () => {
-                    this.destroy();
-                },
-                'death'
-            );
-        }
-
-        return !this.isDead;
+    private move() {
+        const { x: targetX, y: targetY } = this.getNextPathNode() ?? {
+            x: 10,
+            y: 10,
+        };
+        this.scene.physics.moveTo(this, targetX, targetY);
+        this.updateNextPathNode();
     }
 
-    public isAlive() {
-        return !this.isDead;
+    private kill() {
+        this.speechBubble.destroy();
+        this.play('death');
+        this.on(
+            'animationcomplete',
+            () => {
+                this.destroy();
+            },
+            'death'
+        );
     }
 
     public getScoreValue() {
@@ -157,13 +159,14 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     public update() {
+        this.move();
         this.speechBubble.x =
             this.x + this.width / 2 - this.speechBubble.width / 2;
         this.speechBubble.y =
             this.y + this.height / 2 + this.speechBubble.height / 2;
 
         if (this.path.length <= 0) {
-            this.attemptMarkAsDead(this.equation?.getInvisibleElement());
+            this.kill();
             this.scene.events.emit('enemyHitPlayer');
         }
     }

@@ -42,17 +42,17 @@ export class Game extends Scene {
     }
 
     update() {
-        this.checkGameOver();
+        this.enemies = this.enemies.filter((enemy) => {
+            return enemy.active;
+        });
 
-        this.destroyEnemies();
+        this.checkGameOver();
 
         this.enemies.forEach((enemy) => {
             enemy.update();
         });
 
         this.player.update();
-
-        this.moveEnemies();
 
         this.executeSpawn();
     }
@@ -80,13 +80,13 @@ export class Game extends Scene {
             this.player.takeDamage(1);
         });
 
-        this.events.on('playerHitEnemy', (enemy: Enemy) => {
-            enemy.attemptMarkAsDead(this.currentEquationElement);
+        this.events.on('playerKilledEnemy', (data: { score: number }) => {
+            this.player.addScore(data.score);
+            this.deleteCurrentEquationElement();
+        });
 
-            if (enemy.removeIfMarkedDead()) {
-                this.player.addScore(enemy.getScoreValue());
-                this.deleteCurrentEquationElement();
-            }
+        this.events.on('playerHitEnemy', (enemy: Enemy) => {
+            enemy.attemptKill(this.currentEquationElement);
         });
 
         this.events.on('playerReload', () => {
@@ -124,28 +124,6 @@ export class Game extends Scene {
     private updateEquationElementDisplay() {
         this.currentEquationElementDisplay.setText(
             '' + this.currentEquationElement
-        );
-    }
-
-    private moveEnemies() {
-        for (const enemy of this.enemies) {
-            if (!enemy.removeIfMarkedDead()) {
-                continue;
-            }
-
-            const { x: targetX, y: targetY } = enemy.getNextPathNode() ?? {
-                x: 10,
-                y: 10,
-            };
-
-            this.physics.moveTo(enemy, targetX, targetY);
-            enemy.updateNextPathNode();
-        }
-    }
-
-    private destroyEnemies() {
-        this.enemies = this.enemies.filter((enemy) =>
-            enemy.removeIfMarkedDead()
         );
     }
 
