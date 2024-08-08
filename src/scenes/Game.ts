@@ -104,6 +104,8 @@ export class Game extends Scene {
                 break;
             }
         }
+
+        this.updateCurrentEquationElement();
     }
 
     private displayCurrentEquationElement() {
