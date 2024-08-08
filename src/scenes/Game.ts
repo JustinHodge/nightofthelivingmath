@@ -3,7 +3,6 @@ import { gameSize } from '../main';
 import { Enemy } from '../Class/Enemy';
 import { Player } from '../Class/Player';
 import { Equation, TOperator } from '../Class/Equation';
-import { TDifficulty } from './MainMenu';
 
 export interface IPathNode {
     x: number;
@@ -23,9 +22,6 @@ export class Game extends Scene {
     private currentEquationElementDisplay: Phaser.GameObjects.Text;
 
     private PATH_NODES: IPathNode[];
-    // private readonly PATH_NODES: IPathNode[] = [];
-    private ZOMBIE_SPAWN_BOX: IPathNode;
-    private DIFFICULTY: TDifficulty;
 
     constructor() {
         super('Game');
@@ -33,8 +29,6 @@ export class Game extends Scene {
 
     create() {
         this.PATH_NODES = this.cache.json.get('mapNodes');
-        this.ZOMBIE_SPAWN_BOX = this.PATH_NODES[0];
-        this.DIFFICULTY = this.registry.get('difficulty');
 
         this.camera = this.cameras.main;
 
@@ -172,15 +166,6 @@ export class Game extends Scene {
         const shouldSpawn = Math.floor(Math.random() * 100) === 0;
 
         if (forceSpawn || shouldSpawn) {
-            const enemySpawnCoords = {
-                x:
-                    this.ZOMBIE_SPAWN_BOX.x +
-                    Math.floor(Math.random() * this.ZOMBIE_SPAWN_BOX.width),
-                y:
-                    this.ZOMBIE_SPAWN_BOX.y +
-                    Math.floor(Math.random() * this.ZOMBIE_SPAWN_BOX.height),
-            };
-
             const enemyEquation = new Equation(2);
             this.invisibleEquationElements.push(
                 enemyEquation.getInvisibleElement()
@@ -195,19 +180,6 @@ export class Game extends Scene {
                 equation: enemyEquation,
                 path: this.PATH_NODES,
             });
-
-            // const newEnemy = new Enemy({
-            //     scene: this,
-            //     x: enemySpawnCoords.x,
-            //     y: enemySpawnCoords.y,
-            //     key: 'atlas',
-            //     frame: 'Big Zombie Walking Animation Frames/Zombie-Tileset---_0412',
-            //     options: {
-            //         equation: enemyEquation,
-            //     },
-            // });
-
-            // newEnemy.setPath(this.PATH_NODES);
 
             this.enemies.push(newEnemy);
         }
