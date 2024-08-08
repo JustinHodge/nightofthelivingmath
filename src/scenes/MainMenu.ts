@@ -87,19 +87,16 @@ export class MainMenu extends Scene {
                 .setOrigin(0.5)
                 .setInteractive();
 
-            gameSelector.once(
-                'pointerdown',
-                (pointer: Phaser.Input.Pointer) => {
-                    this.registry.set('difficulty', difficulty);
-                    this.scene.start('Game');
-                }
-            );
+            gameSelector.once('pointerdown', () => {
+                this.registry.set('difficulty', difficulty);
+                this.scene.start('Game');
+            });
 
-            gameSelector.on('pointerover', (pointer: Phaser.Input.Pointer) => {
+            gameSelector.on('pointerover', () => {
                 gameSelector.setTint(0xa60000);
             });
 
-            gameSelector.on('pointerout', (pointer: Phaser.Input.Pointer) => {
+            gameSelector.on('pointerout', () => {
                 gameSelector.clearTint();
             });
         }
