@@ -22,6 +22,7 @@ export class Game extends Scene {
     private currentEquationElement: number | TOperator;
     private currentEquationElementDisplay: Phaser.GameObjects.Text;
     private difficulty: TDifficulty;
+    private lastSpawnTime: number;
 
     private PATH_NODES: IPathNode[];
 
@@ -32,6 +33,7 @@ export class Game extends Scene {
     create() {
         this.difficulty = this.registry.get('difficulty');
         this.PATH_NODES = this.cache.json.get('mapNodes');
+        this.lastSpawnTime = this.time.now;
 
         this.camera = this.cameras.main;
 
@@ -44,7 +46,7 @@ export class Game extends Scene {
         this.createPlayer();
     }
 
-    update() {
+    update(time: number) {
         this.enemies = this.enemies.filter((enemy) => {
             return enemy.active;
         });
@@ -57,7 +59,7 @@ export class Game extends Scene {
 
         this.player.update();
 
-        this.executeSpawn();
+        this.handleSpawns();
     }
 
     private checkGameOver() {
@@ -145,8 +147,8 @@ export class Game extends Scene {
         this.updateEquationElementDisplay();
     }
 
-    private executeSpawn(forceSpawn = false) {
-        const shouldSpawn = Math.floor(Math.random() * 100) === 0;
+    private handleSpawns(forceSpawn = false) {
+        const shouldSpawn = this.shouldSpawn();
 
         if (forceSpawn || shouldSpawn) {
             const enemyEquation = new Equation(this.difficulty);
@@ -165,6 +167,21 @@ export class Game extends Scene {
             });
 
             this.enemies.push(newEnemy);
+            this.lastSpawnTime = this.time.now;
+        }
+    }
+
+    private shouldSpawn() {
+        const elapsedMillis = this.time.now - this.lastSpawnTime;
+        const secondsSinceLastSpawn = elapsedMillis / 1000;
+        const difficultyModifier = 2 / this.difficulty.difficultyNumber;
+        const maxTimeSinceLastSpawn = 3 * difficultyModifier;
+
+        const isNoCurrentEnemies = this.enemies.length < 1;
+        const spawnTimerElapsed = secondsSinceLastSpawn > maxTimeSinceLastSpawn;
+
+        if (isNoCurrentEnemies || spawnTimerElapsed) {
+            return true;
         }
     }
 }

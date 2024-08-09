@@ -49,7 +49,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     public getScoreValue() {
-        return 100;
+        return (
+            100 * this.scene.registry.get('difficulty').difficultyNumber ?? 1
+        );
     }
 
     public getNextPathNode() {
