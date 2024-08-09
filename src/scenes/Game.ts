@@ -81,9 +81,13 @@ export class Game extends Scene {
     }
 
     private createEventHandlers() {
-        this.events.on('enemyHitPlayer', () => {
-            this.player.takeDamage(1);
-        });
+        this.events.on(
+            'enemyHitPlayer',
+            (enemyHiddenElement: number | TOperator) => {
+                this.player.takeDamage(1);
+                this.deleteEquationElement(enemyHiddenElement);
+            }
+        );
 
         this.events.on('playerKilledEnemy', (data: { score: number }) => {
             this.player.addScore(data.score);
@@ -100,8 +104,12 @@ export class Game extends Scene {
     }
 
     private deleteCurrentEquationElement() {
+        this.deleteEquationElement(this.currentEquationElement);
+    }
+
+    private deleteEquationElement(elementToDelete: number | TOperator) {
         for (const element of this.invisibleEquationElements) {
-            if (element === this.currentEquationElement) {
+            if (element === elementToDelete) {
                 this.invisibleEquationElements.splice(
                     this.invisibleEquationElements.indexOf(element),
                     1

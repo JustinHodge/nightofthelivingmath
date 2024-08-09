@@ -86,9 +86,12 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.speechBubble.y =
             this.y + this.height / 2 + this.speechBubble.height / 2;
 
-        if (this.path.length <= 0) {
+        if (this.path.length <= 0 && !this.isDead) {
             this.kill();
-            this.scene.events.emit('enemyHitPlayer');
+            this.scene.events.emit(
+                'enemyHitPlayer',
+                this.equation?.getInvisibleElement()
+            );
         }
     }
 
