@@ -88,7 +88,10 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         if (this.path.length <= 0 && !this.isDead) {
             this.kill();
-            this.scene.events.emit('enemyHitPlayer');
+            this.scene.events.emit(
+                'enemyHitPlayer',
+                this.equation?.getInvisibleElement()
+            );
         }
     }
 
