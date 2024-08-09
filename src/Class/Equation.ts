@@ -36,6 +36,11 @@ export class Equation {
     private generateEquation(difficulty: TDifficulty) {
         const operators = difficulty.operators;
 
+        this.operator = {
+            value: operators[Math.floor(Math.random() * operators.length)],
+            visible: true,
+        };
+
         while (
             !Number.isInteger(this.num1?.value) ||
             !Number.isInteger(this.num2?.value) ||
@@ -43,10 +48,6 @@ export class Equation {
         ) {
             this.num1 = {
                 value: Math.floor(Math.random() * 100),
-                visible: true,
-            };
-            this.operator = {
-                value: operators[Math.floor(Math.random() * operators.length)],
                 visible: true,
             };
             this.num2 = {
