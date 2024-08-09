@@ -46,7 +46,7 @@ export class Game extends Scene {
         this.createPlayer();
     }
 
-    update(time: number) {
+    update() {
         this.enemies = this.enemies.filter((enemy) => {
             return enemy.active;
         });
@@ -114,7 +114,7 @@ export class Game extends Scene {
     }
 
     private displayCurrentEquationElement() {
-        this.currentEquationElementDisplay = this.add.text(500, 500, '', {
+        this.currentEquationElementDisplay = this.add.text(750, 700, '', {
             fontSize: '20px',
             backgroundColor: '#cccccccc',
             padding: {
