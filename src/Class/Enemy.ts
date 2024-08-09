@@ -1,5 +1,6 @@
 import { IPathNode } from '../scenes/Game';
-import { Equation, TOperator } from './Equation';
+import { TOperator } from '../scenes/MainMenu';
+import { Equation } from './Equation';
 
 interface IConfig {
     scene: Phaser.Scene;
@@ -45,6 +46,62 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.setInteractive();
 
         scene.add.existing(this);
+    }
+
+    public getScoreValue() {
+        return 100;
+    }
+
+    public getNextPathNode() {
+        return this.path[0];
+    }
+
+    public updateNextPathNode() {
+        const deltaX = Math.abs(this.path[0].x - this.x);
+        const deltaY = Math.abs(this.path[0].y - this.y);
+
+        if (deltaX <= 1 && deltaY <= 1) {
+            this.path.shift();
+            if (this.path.length > 0) {
+                const deltaAngle = Phaser.Math.Angle.BetweenPoints(
+                    { x: this.x, y: this.y },
+                    { x: this.path[0].x, y: this.path[0].y }
+                );
+
+                this.setFacingDirection(
+                    Phaser.Math.RadToDeg(
+                        Phaser.Math.Angle.Normalize(deltaAngle)
+                    )
+                );
+            }
+        }
+    }
+
+    public update() {
+        this.move();
+        this.speechBubble.x =
+            this.x + this.width / 2 - this.speechBubble.width / 2;
+        this.speechBubble.y =
+            this.y + this.height / 2 + this.speechBubble.height / 2;
+
+        if (this.path.length <= 0) {
+            this.kill();
+            this.scene.events.emit('enemyHitPlayer');
+        }
+    }
+
+    public attemptKill(equationComponent: number | TOperator | undefined) {
+        if (
+            !this.equation ||
+            this.equation?.getInvisibleElement() === equationComponent
+        ) {
+            this.kill();
+            this.scene.events.emit('playerKilledEnemy', {
+                score: this.getScoreValue(),
+            });
+        }
+
+        return false;
     }
 
     private buildSpeechBubble() {
@@ -95,20 +152,6 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    public attemptKill(equationComponent: number | TOperator | undefined) {
-        if (
-            !this.equation ||
-            this.equation?.getInvisibleElement() === equationComponent
-        ) {
-            this.kill();
-            this.scene.events.emit('playerKilledEnemy', {
-                score: this.getScoreValue(),
-            });
-        }
-
-        return false;
-    }
-
     private move() {
         if (this.isDead) {
             this.setVelocity(0, 0);
@@ -134,48 +177,6 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
             },
             'death'
         );
-    }
-
-    public getScoreValue() {
-        return 100;
-    }
-
-    public getNextPathNode() {
-        return this.path[0];
-    }
-
-    public updateNextPathNode() {
-        const deltaX = Math.abs(this.path[0].x - this.x);
-        const deltaY = Math.abs(this.path[0].y - this.y);
-
-        if (deltaX <= 1 && deltaY <= 1) {
-            this.path.shift();
-            if (this.path.length > 0) {
-                const deltaAngle = Phaser.Math.Angle.BetweenPoints(
-                    { x: this.x, y: this.y },
-                    { x: this.path[0].x, y: this.path[0].y }
-                );
-
-                this.setFacingDirection(
-                    Phaser.Math.RadToDeg(
-                        Phaser.Math.Angle.Normalize(deltaAngle)
-                    )
-                );
-            }
-        }
-    }
-
-    public update() {
-        this.move();
-        this.speechBubble.x =
-            this.x + this.width / 2 - this.speechBubble.width / 2;
-        this.speechBubble.y =
-            this.y + this.height / 2 + this.speechBubble.height / 2;
-
-        if (this.path.length <= 0) {
-            this.kill();
-            this.scene.events.emit('enemyHitPlayer');
-        }
     }
 
     private setFacingDirection(deltaAngle: number) {

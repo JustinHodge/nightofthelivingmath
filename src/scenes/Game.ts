@@ -2,7 +2,8 @@ import { Scene } from 'phaser';
 import { gameSize } from '../main';
 import { Enemy } from '../Class/Enemy';
 import { Player } from '../Class/Player';
-import { Equation, TOperator } from '../Class/Equation';
+import { Equation } from '../Class/Equation';
+import { TDifficulty, TOperator } from './MainMenu';
 
 export interface IPathNode {
     x: number;
@@ -20,6 +21,7 @@ export class Game extends Scene {
     private invisibleEquationElements: (number | TOperator)[] = [];
     private currentEquationElement: number | TOperator;
     private currentEquationElementDisplay: Phaser.GameObjects.Text;
+    private difficulty: TDifficulty;
 
     private PATH_NODES: IPathNode[];
 
@@ -28,6 +30,7 @@ export class Game extends Scene {
     }
 
     create() {
+        this.difficulty = this.registry.get('difficulty');
         this.PATH_NODES = this.cache.json.get('mapNodes');
 
         this.camera = this.cameras.main;
@@ -146,7 +149,7 @@ export class Game extends Scene {
         const shouldSpawn = Math.floor(Math.random() * 100) === 0;
 
         if (forceSpawn || shouldSpawn) {
-            const enemyEquation = new Equation(2);
+            const enemyEquation = new Equation(this.difficulty);
             this.invisibleEquationElements.push(
                 enemyEquation.getInvisibleElement()
             );

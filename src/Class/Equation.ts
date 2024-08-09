@@ -1,6 +1,4 @@
-type TDifficulty = 0 | 1 | 2 | 3 | 4 | 5 | 6;
-type TEquationElement = 'num1' | 'num2' | 'operator' | 'result';
-export type TOperator = '+' | '-' | '*' | '/';
+import { TDifficulty, TEquationElement, TOperator } from '../scenes/MainMenu';
 
 export class Equation {
     private num1: {
@@ -23,29 +21,7 @@ export class Equation {
     private visibleString: string = '';
     private hiddenComponent: TEquationElement = 'result';
 
-    private readonly hidableElementMap: {
-        [K in TDifficulty]: TEquationElement[];
-    } = {
-        0: ['result', 'num1', 'num2'],
-        1: ['result', 'num1', 'num2'],
-        2: ['result', 'num1', 'num2', 'operator'],
-        3: ['result', 'num1', 'num2'],
-        4: ['result', 'num1', 'num2', 'operator'],
-        5: ['result', 'num1', 'num2'],
-        6: ['result', 'num1', 'num2', 'operator'],
-    };
-
-    private readonly operatorsByDifficulty: Record<number, TOperator[]> = {
-        0: ['+'],
-        1: ['+', '-'],
-        2: ['+', '-'],
-        3: ['+', '-', '*'],
-        4: ['+', '-', '*'],
-        5: ['+', '-', '*', '/'],
-        6: ['+', '-', '*', '/'],
-    };
-
-    constructor(difficulty: TDifficulty = 0) {
+    constructor(difficulty: TDifficulty) {
         this.generateEquation(difficulty);
     }
 
@@ -58,7 +34,7 @@ export class Equation {
     }
 
     private generateEquation(difficulty: TDifficulty) {
-        const operators = this.operatorsByDifficulty[difficulty];
+        const operators = difficulty.operators;
 
         while (
             !Number.isInteger(this.num1?.value) ||
@@ -86,7 +62,7 @@ export class Equation {
             };
         }
 
-        const hidableElements = this.hidableElementMap[difficulty];
+        const hidableElements = difficulty.hidableElements;
         this.hiddenComponent =
             hidableElements[Math.floor(Math.random() * hidableElements.length)];
         this[this.hiddenComponent].visible = false;

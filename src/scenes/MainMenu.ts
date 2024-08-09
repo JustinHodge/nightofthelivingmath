@@ -1,10 +1,16 @@
 import { Scene, GameObjects } from 'phaser';
 
+export type TOperator = '+' | '-' | '*' | '/';
+
 export type TDifficulty = {
     label: string;
     difficultyNumber: number;
     description: string;
+    hidableElements: TEquationElement[];
+    operators: TOperator[];
 };
+
+export type TEquationElement = 'num1' | 'num2' | 'operator' | 'result';
 
 export class MainMenu extends Scene {
     background: GameObjects.Image;
@@ -41,28 +47,38 @@ export class MainMenu extends Scene {
                 label: 'Beginner',
                 difficultyNumber: 1,
                 description: 'Addition Only',
+                hidableElements: ['num1', 'num2', 'result'],
+                operators: ['+'],
             },
             {
                 label: 'Easy',
                 difficultyNumber: 2,
                 description: 'Addition and Subtraction',
+                hidableElements: ['num1', 'num2', 'result'],
+                operators: ['+', '-'],
             },
             {
                 label: 'Medium',
                 difficultyNumber: 3,
                 description: 'Challenging Addition And Subtraction',
+                hidableElements: ['num1', 'num2', 'operator', 'result'],
+                operators: ['+', '-'],
             },
             {
                 label: 'Hard',
                 difficultyNumber: 4,
                 description:
                     'Addition, Subtraction, Multiplication, and Division',
+                hidableElements: ['num1', 'num2', 'result'],
+                operators: ['+', '-', '*', '/'],
             },
             {
                 label: 'Impossible',
                 difficultyNumber: 5,
                 description:
                     'Challenging Addition, Subtraction, Multiplication, and Division',
+                hidableElements: ['num1', 'num2', 'operator', 'result'],
+                operators: ['+', '-', '*', '/'],
             },
         ];
 
