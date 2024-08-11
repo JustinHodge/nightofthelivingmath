@@ -1,3 +1,5 @@
+import { TEquationElement } from '../scenes/MainMenu';
+
 export class Hud extends Phaser.GameObjects.Image {
     private DIGITMAP: Record<string, string> = {
         '0': 'UI Elements/Zombie-Tileset---_0501',
@@ -13,8 +15,9 @@ export class Hud extends Phaser.GameObjects.Image {
     };
 
     private score: number = 0;
-    private currentItem = null;
+    private currentItem: string | null = null;
     private scoreDisplay: Phaser.GameObjects.Image[] = [];
+    private loadedEquationElement: Phaser.GameObjects.Text;
 
     constructor(scene: Phaser.Scene) {
         super(scene, 0, 0, 'hud');
@@ -25,6 +28,7 @@ export class Hud extends Phaser.GameObjects.Image {
         this.setDepth(1500);
 
         this.initScoreDisplay();
+        this.initLoadedEquationElement();
 
         scene.add.existing(this);
     }
@@ -32,6 +36,46 @@ export class Hud extends Phaser.GameObjects.Image {
     public setScore(newScore: number) {
         this.score = newScore;
         this.updateScoreDisplay();
+    }
+
+    public setCurrentItem(item: string | null) {
+        this.currentItem = item;
+    }
+
+    public animateReload() {
+        throw new Error('Method not implemented.');
+    }
+
+    public updateLoadedEquationElement(newElement: TEquationElement | null) {
+        this.loadedEquationElement.setText(newElement ?? 'RELOAD!');
+    }
+
+    private initLoadedEquationElement() {
+        this.loadedEquationElement = new Phaser.GameObjects.Text(
+            this.scene,
+            748,
+            0,
+            '',
+            {
+                fontSize: '15px',
+                stroke: '#000000',
+                strokeThickness: 4,
+            }
+        );
+
+        this.loadedEquationElement.setY(
+            this.scene.sys.canvas.height -
+                this.loadedEquationElement.displayHeight -
+                (this.displayHeight -
+                    this.loadedEquationElement.displayHeight) /
+                    1.25
+        );
+
+        this.scene.add.existing(this.loadedEquationElement);
+
+        this.loadedEquationElement.setDepth(1600);
+
+        this.updateLoadedEquationElement(null);
     }
 
     private updateScoreDisplay() {
