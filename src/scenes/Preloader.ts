@@ -41,6 +41,9 @@ export class Preloader extends Scene {
         );
 
         this.load.emit('progress', 0.9);
+
+        this.load.image('hud', 'HUD.png');
+        this.load.emit('progress', 1);
     }
 
     create() {
