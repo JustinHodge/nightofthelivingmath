@@ -4,7 +4,7 @@ import {
     GAME_MIDDLE_X,
     GAME_MIDDLE_Y,
     MAIN_MENU_BACKGROUND_ALPHA,
-    MAIN_MENU_KEY,
+    MAIN_MENU_SCENE_KEY,
     MAIN_MENU_BACKGROUND_TINT,
     MAIN_MENU_CURSOR,
     MAIN_MENU_CONTAINER_X,
@@ -20,7 +20,7 @@ import {
     MAIN_MENU_DIFFICULTY_SELECTOR_PADDING_Y,
     POINTER_DOWN_EVENT_KEY,
     POINTER_OVER_EVENT_KEY,
-    GAME_KEY,
+    GAME_SCENE_KEY,
     POINTER_OUT_EVENT_KEY,
     REGISTRY_DIFFICULTY_KEY,
     MAIN_MENU_DIFFICULTY_SELECTOR_HIGHLIGHT_COLOR,
@@ -34,7 +34,7 @@ export class MainMenu extends Scene {
     menuContainer: GameObjects.Rectangle;
 
     constructor() {
-        super(MAIN_MENU_KEY);
+        super(MAIN_MENU_SCENE_KEY);
     }
 
     create() {
@@ -84,7 +84,7 @@ export class MainMenu extends Scene {
 
             gameSelector.once(POINTER_DOWN_EVENT_KEY, () => {
                 this.registry.set(REGISTRY_DIFFICULTY_KEY, difficulty);
-                this.scene.start(GAME_KEY);
+                this.scene.start(GAME_SCENE_KEY);
             });
 
             gameSelector.on(POINTER_OVER_EVENT_KEY, () => {

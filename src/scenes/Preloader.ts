@@ -27,13 +27,13 @@ import {
     PLAYER_SPRITE_ATLAS_JSON_FILENAME,
     HUD_KEY,
     HUD_FILENAME,
-    MAIN_MENU_KEY,
-    PRELOADER_KEY,
+    MAIN_MENU_SCENE_KEY,
+    PRELOADER_SCENE_KEY,
 } from '../constants';
 
 export class Preloader extends Scene {
     constructor() {
-        super(PRELOADER_KEY);
+        super(PRELOADER_SCENE_KEY);
     }
 
     init() {
@@ -86,6 +86,6 @@ export class Preloader extends Scene {
     }
 
     create() {
-        this.scene.start(MAIN_MENU_KEY);
+        this.scene.start(MAIN_MENU_SCENE_KEY);
     }
 }
