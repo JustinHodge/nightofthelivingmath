@@ -77,8 +77,26 @@ export const MAIN_MENU_DIFFICULTY_SELECTOR_TEXT_STYLE: Phaser.Types.GameObjects.
         align: 'center',
     };
 
+export const GAME_CURSOR = 'none';
+
 export const MAIN_MENU_LOGO_X = GAME_MIDDLE_X;
 export const MAIN_MENU_LOGO_Y = GAME_MIDDLE_Y;
+
+export const BASE_ENEMY_DAMAGE = 1;
+
+export const CURRENT_EQUATION_ELEMENT_DISPLAY_X = 750;
+export const CURRENT_EQUATION_ELEMENT_DISPLAY_Y = 700;
+export const CURRENT_EQUATION_ELEMENT_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextStyle =
+    {
+        fontSize: '20px',
+        backgroundColor: '#cccccccc',
+        padding: {
+            x: 10,
+            y: 5,
+        },
+        stroke: '#000000',
+        strokeThickness: 4,
+    };
 
 // REGISTRY KEYS
 export const REGISTRY_DIFFICULTY_KEY = 'difficulty';
@@ -88,12 +106,19 @@ export const LOAD_PROGRESS_EVENT_KEY = 'progress';
 export const POINTER_DOWN_EVENT_KEY = 'pointerdown';
 export const POINTER_OVER_EVENT_KEY = 'pointerover';
 export const POINTER_OUT_EVENT_KEY = 'pointerout';
+export const ENEMY_HIT_PLAYER_EVENT_KEY = 'enemyHitPlayer';
+export const PLAYER_KILLED_ENEMY_EVENT_KEY = 'playerKilledEnemy';
+export const PLAYER_HIT_ENEMY_EVENT_KEY = 'playerHitEnemy';
+export const PLAYER_RELOAD_EVENT_KEY = 'playerReload';
 
 // SCENE KEYS
-export const PRELOADER_KEY = 'Preloader';
-export const MAIN_MENU_KEY = 'MainMenu';
-export const GAME_KEY = 'Game';
-export const GAME_OVER_KEY = 'GameOver';
+export const PRELOADER_SCENE_KEY = 'Preloader';
+export const MAIN_MENU_SCENE_KEY = 'MainMenu';
+export const GAME_SCENE_KEY = 'Game';
+export const GAME_OVER_SCENE_KEY = 'GameOver';
+
+// MATH CONSTANTS
+export const MILLIS_IN_SECOND = 1000;
 
 // GAME_CONSTANTS
 export const DIFFICULTIES: TDifficulty[] = [

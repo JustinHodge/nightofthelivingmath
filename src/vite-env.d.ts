@@ -10,3 +10,10 @@ export type TDifficulty = {
 };
 
 export type TEquationElement = 'num1' | 'num2' | 'operator' | 'result';
+
+export interface IPathNode {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
