@@ -34,15 +34,9 @@ export const LOGO_FILENAME = 'logo.png';
 export const MAP_NODES_KEY = 'mapNodes';
 export const MAP_NODES_FILENAME = 'nightofthelivingmathmap.json';
 
-export const SPRITE_SHEET_KEY = 'sprite-sheet';
-export const SPRITE_SHEET_FILENAME = 'atlas.png';
-
 export const ATLAS_KEY = 'atlas';
 export const ATLAS_JSON_FILENAME = 'atlas.json';
 export const ATLAS_IMAGE_FILENAME = 'atlas.png';
-
-export const PLAYER_SPRITE_SHEET_KEY = 'player-sprite-sheet';
-export const PLAYER_SPRITE_SHEET_FILENAME = 'player-sprites.png';
 
 export const PLAYER_SPRITE_ATLAS_KEY = 'player-sprites';
 export const PLAYER_SPRITE_ATLAS_JSON_FILENAME = 'player-sprites.json';
@@ -98,14 +92,43 @@ export const CURRENT_EQUATION_ELEMENT_TEXT_STYLE: Phaser.Types.GameObjects.Text.
         strokeThickness: 4,
     };
 
+export const PLAYER_START_X = GAME_MIDDLE_X;
+export const PLAYER_START_Y = GAME_MIDDLE_Y;
+export const PLAYER_SPRITE_FRAME_3 = 'crosshair/crosshair3.png';
+export const PLAYER_SPRITE_FRAME_4 = 'crosshair/crosshair4.png';
+export const PLAYER_SPRITE_FRAME_5 = 'crosshair/crosshair5.png';
+export const PLAYER_SPRITE_MISS_FRAME = 'crosshair/crosshairmiss.png';
+export const PLAYER_SPRITE_HIT_FRAME = 'crosshair/crosshairhit.png';
+export const PLAYER_MAX_HEALTH = 16;
+export const PLAYER_SPRITE_SCALE = 2;
+export const PLAYER_HEALTH_ORB_SPRITE_FRAMES: Record<number, string> = {
+    0: 'health/health0.png',
+    1: 'health/health1.png',
+    2: 'health/health2.png',
+    3: 'health/health3.png',
+    4: 'health/health4.png',
+};
+export const PLAYER_HEALTH_ORB_IMAGE_SIZE = 64;
+
+// DEPTH LAYERS
+export const PLAYER_SPRITE_DEPTH = 100;
+export const PLAYER_HEALTH_ORB_DEPTH = 100;
+
 // REGISTRY KEYS
 export const REGISTRY_DIFFICULTY_KEY = 'difficulty';
+
+// ANIMATION KEYS
+export const PLAYER_IDLE_ANIMATION_KEY = 'PlayerIdleAnimation';
+export const PLAYER_MISS_ANIMATION_KEY = 'PlayerMissAnimation';
+export const PLAYER_HIT_ANIMATION_KEY = 'PlayerHitAnimation';
 
 // EVENT KEYS
 export const LOAD_PROGRESS_EVENT_KEY = 'progress';
 export const POINTER_DOWN_EVENT_KEY = 'pointerdown';
 export const POINTER_OVER_EVENT_KEY = 'pointerover';
 export const POINTER_OUT_EVENT_KEY = 'pointerout';
+export const POINTER_MOVE_EVENT_KEY = 'pointermove';
+export const GAME_OBJECT_DOWN_EVENT_KEY = 'gameobjectdown';
 export const ENEMY_HIT_PLAYER_EVENT_KEY = 'enemyHitPlayer';
 export const PLAYER_KILLED_ENEMY_EVENT_KEY = 'playerKilledEnemy';
 export const PLAYER_HIT_ENEMY_EVENT_KEY = 'playerHitEnemy';

@@ -22,13 +22,13 @@ import {
     ATLAS_KEY,
     ATLAS_IMAGE_FILENAME,
     ATLAS_JSON_FILENAME,
-    PLAYER_SPRITE_SHEET_FILENAME,
     PLAYER_SPRITE_ATLAS_KEY,
     PLAYER_SPRITE_ATLAS_JSON_FILENAME,
     HUD_KEY,
     HUD_FILENAME,
     MAIN_MENU_SCENE_KEY,
     PRELOADER_SCENE_KEY,
+    PLAYER_SPRITE_ATLAS_IMAGE_FILENAME,
 } from '../constants';
 
 export class Preloader extends Scene {
@@ -75,7 +75,7 @@ export class Preloader extends Scene {
 
         this.load.atlas(
             PLAYER_SPRITE_ATLAS_KEY,
-            PLAYER_SPRITE_SHEET_FILENAME,
+            PLAYER_SPRITE_ATLAS_IMAGE_FILENAME,
             PLAYER_SPRITE_ATLAS_JSON_FILENAME
         );
 

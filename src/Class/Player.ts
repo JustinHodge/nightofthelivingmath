@@ -1,55 +1,70 @@
-import { gameSize } from '../main';
+import {
+    PLAYER_IDLE_ANIMATION_KEY,
+    GAME_OBJECT_DOWN_EVENT_KEY,
+    GAME_WIDTH,
+    PLAYER_HIT_ENEMY_EVENT_KEY,
+    PLAYER_START_X,
+    PLAYER_START_Y,
+    POINTER_MOVE_EVENT_KEY,
+    PLAYER_HIT_ANIMATION_KEY,
+    PLAYER_MISS_ANIMATION_KEY,
+    PLAYER_MAX_HEALTH,
+    PLAYER_SPRITE_DEPTH,
+    PLAYER_SPRITE_SCALE,
+    PLAYER_HEALTH_ORB_SPRITE_FRAMES,
+    PLAYER_HEALTH_ORB_IMAGE_SIZE,
+    PLAYER_HEALTH_ORB_DEPTH,
+    PLAYER_SPRITE_MISS_FRAME,
+    PLAYER_SPRITE_HIT_FRAME,
+    PLAYER_SPRITE_FRAME_3,
+    PLAYER_SPRITE_FRAME_4,
+    PLAYER_SPRITE_FRAME_5,
+    PLAYER_SPRITE_ATLAS_KEY,
+} from '../constants';
 import { Enemy } from './Enemy';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
-    private maxHealth = 16;
-    private health = this.maxHealth;
+    private health = PLAYER_MAX_HEALTH;
     private healthOrbs: Phaser.GameObjects.Image[] = [];
     private currentScore = 0;
-    private scoreDisplay: Phaser.GameObjects.Text;
 
-    constructor(scene: Phaser.Scene, x: number, y: number) {
-        super(scene, x, y, 'player-sprites', 'crosshair/crosshair1.png');
+    constructor(scene: Phaser.Scene) {
+        super(
+            scene,
+            PLAYER_START_X,
+            PLAYER_START_Y,
+            PLAYER_SPRITE_ATLAS_KEY,
+            PLAYER_SPRITE_FRAME_3
+        );
         scene.physics.world.enableBody(this, 0);
         scene.add.existing(this);
         scene.input.on(
-            'pointermove',
+            POINTER_MOVE_EVENT_KEY,
             (pointer: { x: number | undefined; y: number | undefined }) => {
                 this.setPosition(pointer.x, pointer.y);
-                this.setDepth(100);
-                this.setScale(2);
+                this.setDepth(PLAYER_SPRITE_DEPTH);
+                this.setScale(PLAYER_SPRITE_SCALE);
             }
         );
 
-        this.scoreDisplay = scene.add.text(10, 5, 'Score: 0', {
-            fontSize: '20px',
-            backgroundColor: '#cccccccc',
-            padding: {
-                x: 10,
-                y: 5,
-            },
-            stroke: '#000000',
-            strokeThickness: 4,
-        });
-
         this.setHealthOrbs();
-        this.setScore();
 
         scene.input.on(
-            'gameobjectdown',
+            GAME_OBJECT_DOWN_EVENT_KEY,
             (pointer: Phaser.Input.Pointer, gameObject: Enemy) => {
-                this.play('hit').chain('idle');
-                this.scene.events.emit('playerHitEnemy', gameObject);
+                this.play(PLAYER_HIT_ANIMATION_KEY).chain(
+                    PLAYER_IDLE_ANIMATION_KEY
+                );
+                this.scene.events.emit(PLAYER_HIT_ENEMY_EVENT_KEY, gameObject);
             }
         );
 
         this.createAnims();
-        this.play('idle');
+        this.play(PLAYER_IDLE_ANIMATION_KEY);
     }
 
     public addScore(score: number) {
         this.currentScore += score;
-        this.setScore();
     }
 
     public isDead() {
@@ -61,10 +76,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.setHealthOrbs();
     }
 
-    private setScore() {
-        this.scoreDisplay.setText('Score: ' + this.currentScore);
-    }
-
     private setHealthOrbs() {
         for (const healthOrb of this.healthOrbs) {
             healthOrb.destroy();
@@ -72,22 +83,29 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.healthOrbs = [];
 
-        for (let i = 0; i < Math.ceil(this.maxHealth / 4); i++) {
+        for (let i = 0; i < Math.ceil(PLAYER_MAX_HEALTH / 4); i++) {
+            // TODO: This can likely be done smarter
             const healthInThisOrb = this.health - i * 4;
             const imageNumber =
-                healthInThisOrb >= 0 ? Math.min(healthInThisOrb, 4) : 0;
-            const healthImage = 'health/health' + imageNumber + '.png';
-            const healthImageSize = 64;
+                healthInThisOrb >= 0
+                    ? Math.min(
+                          healthInThisOrb,
+                          Object.keys(PLAYER_HEALTH_ORB_SPRITE_FRAMES).length -
+                              1
+                      )
+                    : 0;
+            const healthImage = PLAYER_HEALTH_ORB_SPRITE_FRAMES[imageNumber];
+            const healthImageSize = PLAYER_HEALTH_ORB_IMAGE_SIZE;
 
             const newOrb = this.scene.add
                 .sprite(
-                    gameSize.width - 75,
+                    GAME_WIDTH - 75,
                     i * healthImageSize,
-                    'player-sprites',
+                    PLAYER_SPRITE_ATLAS_KEY,
                     healthImage
                 )
                 .setOrigin(0, 0)
-                .setDepth(100);
+                .setDepth(PLAYER_HEALTH_ORB_DEPTH);
 
             this.healthOrbs.push(newOrb);
         }
@@ -95,30 +113,45 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     private createAnims() {
         this.anims.create({
-            key: 'miss',
+            key: PLAYER_MISS_ANIMATION_KEY,
             frames: [
-                { key: 'player-sprites', frame: 'crosshair/crosshairmiss.png' },
+                {
+                    key: PLAYER_SPRITE_ATLAS_KEY,
+                    frame: PLAYER_SPRITE_MISS_FRAME,
+                },
             ],
             frameRate: 3,
             repeat: 0,
         });
 
         this.anims.create({
-            key: 'hit',
+            key: PLAYER_HIT_ANIMATION_KEY,
             frames: [
-                { key: 'player-sprites', frame: 'crosshair/crosshairhit.png' },
+                {
+                    key: PLAYER_SPRITE_ATLAS_KEY,
+                    frame: PLAYER_SPRITE_HIT_FRAME,
+                },
             ],
             frameRate: 3,
             repeat: 0,
         });
 
         this.anims.create({
-            key: 'idle',
-            frames: this.anims.generateFrameNames('player-sprites', {
-                prefix: 'crosshair/crosshair',
-                suffix: '.png',
-                frames: [3, 4, 5],
-            }),
+            key: PLAYER_IDLE_ANIMATION_KEY,
+            frames: [
+                {
+                    key: PLAYER_SPRITE_ATLAS_KEY,
+                    frame: PLAYER_SPRITE_FRAME_3,
+                },
+                {
+                    key: PLAYER_SPRITE_ATLAS_KEY,
+                    frame: PLAYER_SPRITE_FRAME_4,
+                },
+                {
+                    key: PLAYER_SPRITE_ATLAS_KEY,
+                    frame: PLAYER_SPRITE_FRAME_5,
+                },
+            ],
             frameRate: 1,
             repeat: -1,
         });
