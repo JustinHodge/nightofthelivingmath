@@ -3,7 +3,7 @@ import {
     BACKGROUND_KEY,
     GAME_MIDDLE_X,
     GAME_MIDDLE_Y,
-    LOAD_PROGRESS_KEY as LOAD_PROGRESS_EVENT_KEY,
+    LOAD_PROGRESS_EVENT_KEY,
     PROGRESS_BAR_CONTAINER_HEIGHT,
     PROGRESS_BAR_CONTAINER_STROKE_COLOR,
     PROGRESS_BAR_CONTAINER_STROKE_WIDTH,
@@ -70,11 +70,9 @@ export class Preloader extends Scene {
         this.load.json(MAP_NODES_KEY, MAP_NODES_FILENAME);
         this.load.emit(LOAD_PROGRESS_EVENT_KEY, 0.3);
 
-        // this.load.image(SPRITE_SHEET_KEY, SPRITE_SHEET_FILENAME);
         this.load.atlas(ATLAS_KEY, ATLAS_IMAGE_FILENAME, ATLAS_JSON_FILENAME);
         this.load.emit(LOAD_PROGRESS_EVENT_KEY, 0.7);
 
-        // this.load.image(PLAYER_SPRITE_SHEET_KEY, PLAYER_SPRITE_SHEET_FILENAME);
         this.load.atlas(
             PLAYER_SPRITE_ATLAS_KEY,
             PLAYER_SPRITE_SHEET_FILENAME,
