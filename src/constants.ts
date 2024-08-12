@@ -116,6 +116,7 @@ export const PRELOADER_SCENE_KEY = 'Preloader';
 export const MAIN_MENU_SCENE_KEY = 'MainMenu';
 export const GAME_SCENE_KEY = 'Game';
 export const GAME_OVER_SCENE_KEY = 'GameOver';
+export const BOOT_SCENE_KEY = 'Boot';
 
 // MATH CONSTANTS
 export const MILLIS_IN_SECOND = 1000;
