@@ -1,56 +1,93 @@
 import { Scene } from 'phaser';
+import {
+    BACKGROUND_KEY,
+    GAME_MIDDLE_X,
+    GAME_MIDDLE_Y,
+    LOAD_PROGRESS_KEY as LOAD_PROGRESS_EVENT_KEY,
+    PROGRESS_BAR_CONTAINER_HEIGHT,
+    PROGRESS_BAR_CONTAINER_STROKE_COLOR,
+    PROGRESS_BAR_CONTAINER_STROKE_WIDTH,
+    PROGRESS_BAR_CONTAINER_WIDTH,
+    PROGRESS_BAR_FILL_HEIGHT,
+    PROGRESS_BAR_FILL_X,
+    PROGRESS_BAR_FILL_Y,
+    PROGRESS_BAR_FILL_INITIAL_WIDTH,
+    PROGRESS_BAR_FILL_COLOR,
+    PROGRESS_BAR_FILL_MAX_WIDTH,
+    ASSETS_PATH,
+    LOGO_KEY,
+    LOGO_FILENAME,
+    MAP_NODES_KEY,
+    MAP_NODES_FILENAME,
+    ATLAS_KEY,
+    ATLAS_IMAGE_FILENAME,
+    ATLAS_JSON_FILENAME,
+    PLAYER_SPRITE_SHEET_FILENAME,
+    PLAYER_SPRITE_ATLAS_KEY,
+    PLAYER_SPRITE_ATLAS_JSON_FILENAME,
+    HUD_KEY,
+    HUD_FILENAME,
+    MAIN_MENU_KEY,
+    PRELOADER_KEY,
+} from '../constants';
 
 export class Preloader extends Scene {
     constructor() {
-        super('Preloader');
+        super(PRELOADER_KEY);
     }
 
     init() {
-        //  We loaded this image in our Boot Scene, so we can display it here
-        this.add.image(512, 384, 'background');
+        this.add.image(GAME_MIDDLE_X, GAME_MIDDLE_Y, BACKGROUND_KEY);
 
-        //  A simple progress bar. This is the outline of the bar.
-        this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff);
+        const progress_container = this.add.rectangle(
+            GAME_MIDDLE_X,
+            GAME_MIDDLE_Y,
+            PROGRESS_BAR_CONTAINER_WIDTH,
+            PROGRESS_BAR_CONTAINER_HEIGHT
+        );
 
-        //  This is the progress bar itself. It will increase in size from the left based on the % of progress.
-        const bar = this.add.rectangle(512 - 230, 384, 4, 28, 0xffffff);
+        progress_container.setStrokeStyle(
+            PROGRESS_BAR_CONTAINER_STROKE_WIDTH,
+            PROGRESS_BAR_CONTAINER_STROKE_COLOR
+        );
 
-        //  Use the 'progress' event emitted by the LoaderPlugin to update the loading bar
-        this.load.on('progress', (progress: number) => {
-            //  Update the progress bar (our bar is 464px wide, so 100% = 464px)
-            bar.width = 4 + 460 * progress;
+        const ProgressFill = this.add.rectangle(
+            PROGRESS_BAR_FILL_X,
+            PROGRESS_BAR_FILL_Y,
+            PROGRESS_BAR_FILL_INITIAL_WIDTH,
+            PROGRESS_BAR_FILL_HEIGHT,
+            PROGRESS_BAR_FILL_COLOR
+        );
+
+        this.load.on(LOAD_PROGRESS_EVENT_KEY, (progress: number) => {
+            ProgressFill.width = PROGRESS_BAR_FILL_MAX_WIDTH * progress;
         });
     }
 
     preload() {
-        //  Load the assets for the game - Replace with your own assets
-        this.load.setPath('assets');
-        this.load.image('logo', 'logo.png');
-        this.load.json('mapNodes', 'nightofthelivingmathmap.json');
-        this.load.emit('progress', 0.3);
+        this.load.setPath(ASSETS_PATH);
+        this.load.image(LOGO_KEY, LOGO_FILENAME);
+        this.load.json(MAP_NODES_KEY, MAP_NODES_FILENAME);
+        this.load.emit(LOAD_PROGRESS_EVENT_KEY, 0.3);
 
-        this.load.image('sprite-sheet', 'atlas.png');
-        this.load.atlas('atlas', 'atlas.png', 'atlas.json');
-        this.load.emit('progress', 0.7);
+        // this.load.image(SPRITE_SHEET_KEY, SPRITE_SHEET_FILENAME);
+        this.load.atlas(ATLAS_KEY, ATLAS_IMAGE_FILENAME, ATLAS_JSON_FILENAME);
+        this.load.emit(LOAD_PROGRESS_EVENT_KEY, 0.7);
 
-        this.load.image('player-sprite-sheet', 'player-sprites.png');
+        // this.load.image(PLAYER_SPRITE_SHEET_KEY, PLAYER_SPRITE_SHEET_FILENAME);
         this.load.atlas(
-            'player-sprites',
-            'player-sprites.png',
-            'player-sprites.json'
+            PLAYER_SPRITE_ATLAS_KEY,
+            PLAYER_SPRITE_SHEET_FILENAME,
+            PLAYER_SPRITE_ATLAS_JSON_FILENAME
         );
 
-        this.load.emit('progress', 0.9);
+        this.load.emit(LOAD_PROGRESS_EVENT_KEY, 0.9);
 
-        this.load.image('hud', 'HUD.png');
-        this.load.emit('progress', 1);
+        this.load.image(HUD_KEY, HUD_FILENAME);
+        this.load.emit(LOAD_PROGRESS_EVENT_KEY, 1);
     }
 
     create() {
-        //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
-        //  For example, you can define global animations here, so we can use them in other scenes.
-
-        //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-        this.scene.start('MainMenu');
+        this.scene.start(MAIN_MENU_KEY);
     }
 }
