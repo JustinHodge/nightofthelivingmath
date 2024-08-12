@@ -4,6 +4,7 @@ import { Enemy } from '../Class/Enemy';
 import { Player } from '../Class/Player';
 import { Equation } from '../Class/Equation';
 import { TDifficulty, TOperator } from './MainMenu';
+import { Hud } from '../Class/Hud';
 
 export interface IPathNode {
     x: number;
@@ -23,6 +24,7 @@ export class Game extends Scene {
     private currentEquationElementDisplay: Phaser.GameObjects.Text;
     private difficulty: TDifficulty;
     private lastSpawnTime: number;
+    private hud: Phaser.GameObjects.Image;
 
     private PATH_NODES: IPathNode[];
 
@@ -42,6 +44,8 @@ export class Game extends Scene {
             gameSize.middleY,
             'background'
         );
+
+        this.hud = new Hud(this);
 
         this.createPlayer();
     }
