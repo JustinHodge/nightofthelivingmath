@@ -1,6 +1,7 @@
 import {
     ATLAS_KEY,
     EQUATION_ELEMENT,
+    EQUATION_OPERATOR,
     GAME_HEIGHT,
     GAME_WIDTH,
     HUD_DEPTH,
@@ -55,8 +56,12 @@ export class Hud extends Phaser.GameObjects.Image {
         throw new Error('Method not implemented.');
     }
 
-    public updateLoadedEquationElement(newElement: EQUATION_ELEMENT | null) {
-        this.loadedEquationElement.setText(newElement ?? HUD_RELOAD_STRING);
+    public setLoadedEquationElement(
+        newElement: number | EQUATION_OPERATOR | null
+    ) {
+        this.loadedEquationElement.setText(
+            (newElement ?? HUD_RELOAD_STRING).toString()
+        );
     }
 
     private initLoadedEquationElement() {
@@ -78,7 +83,7 @@ export class Hud extends Phaser.GameObjects.Image {
 
         this.loadedEquationElement.setDepth(LOADED_EQUATION_ELEMENT_DEPTH);
 
-        this.updateLoadedEquationElement(null);
+        this.setLoadedEquationElement(null);
     }
 
     private initScoreDisplay() {
