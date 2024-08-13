@@ -1,5 +1,6 @@
 import {
     ATLAS_KEY,
+    EQUATION_ELEMENT,
     GAME_HEIGHT,
     GAME_WIDTH,
     HUD_DEPTH,
@@ -12,7 +13,6 @@ import {
     LOADED_EQUATION_ELEMENT_DEPTH,
     SCORE_DISPLAY_DEPTH,
 } from '../constants';
-import { TEquationElement } from '../vite-env';
 
 export class Hud extends Phaser.GameObjects.Image {
     private score: number = 0;
@@ -48,7 +48,7 @@ export class Hud extends Phaser.GameObjects.Image {
         throw new Error('Method not implemented.');
     }
 
-    public updateLoadedEquationElement(newElement: TEquationElement | null) {
+    public updateLoadedEquationElement(newElement: EQUATION_ELEMENT | null) {
         this.loadedEquationElement.setText(newElement ?? HUD_RELOAD_STRING);
     }
 

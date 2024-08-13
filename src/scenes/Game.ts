@@ -10,6 +10,7 @@ import {
     CURRENT_EQUATION_ELEMENT_DISPLAY_Y,
     CURRENT_EQUATION_ELEMENT_TEXT_STYLE,
     ENEMY_HIT_PLAYER_EVENT_KEY,
+    EQUATION_OPERATOR,
     GAME_CURSOR,
     GAME_MIDDLE_X,
     GAME_MIDDLE_Y,
@@ -22,7 +23,7 @@ import {
     PLAYER_RELOAD_EVENT_KEY,
     REGISTRY_DIFFICULTY_KEY,
 } from '../constants';
-import { TOperator, TDifficulty, IPathNode } from '../vite-env';
+import { TDifficulty, IPathNode } from '../vite-env';
 
 export class Game extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -31,8 +32,8 @@ export class Game extends Scene {
 
     private enemies: Enemy[] = [];
     private player: Player;
-    private invisibleEquationElements: (number | TOperator)[] = [];
-    private currentEquationElement: number | TOperator;
+    private invisibleEquationElements: (number | EQUATION_OPERATOR)[] = [];
+    private currentEquationElement: number | EQUATION_OPERATOR;
     private currentEquationElementDisplay: Phaser.GameObjects.Text;
     private difficulty: TDifficulty;
     private lastSpawnTime: number;
@@ -99,7 +100,7 @@ export class Game extends Scene {
     private createEventHandlers() {
         this.events.on(
             ENEMY_HIT_PLAYER_EVENT_KEY,
-            (enemyHiddenElement: number | TOperator) => {
+            (enemyHiddenElement: number | EQUATION_OPERATOR) => {
                 this.player.takeDamage(BASE_ENEMY_DAMAGE);
                 this.deleteEquationElement(enemyHiddenElement);
             }
@@ -126,7 +127,7 @@ export class Game extends Scene {
         this.deleteEquationElement(this.currentEquationElement);
     }
 
-    private deleteEquationElement(elementToDelete: number | TOperator) {
+    private deleteEquationElement(elementToDelete: number | EQUATION_OPERATOR) {
         for (const element of this.invisibleEquationElements) {
             if (element === elementToDelete) {
                 this.invisibleEquationElements.splice(

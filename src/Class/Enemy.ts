@@ -19,12 +19,13 @@ import {
     UP_FACING_ANGLES,
     ENEMY_ANIMATION_FRAME_RATE,
     ANIMATION_INFINITE_REPEAT,
+    EQUATION_OPERATOR,
 } from '../constants';
 import {
     generateFrameKeys,
     generateFrameObjects,
 } from '../utils/frameGenerators';
-import { IPathNode, TOperator } from '../vite-env';
+import { IPathNode } from '../vite-env';
 
 import { Equation } from './Equation';
 
@@ -127,7 +128,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    public attemptKill(equationComponent: number | TOperator | undefined) {
+    public attemptKill(
+        equationComponent: number | EQUATION_OPERATOR | undefined
+    ) {
         if (
             !this.equation ||
             this.equation?.getInvisibleElement() === equationComponent

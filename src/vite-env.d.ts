@@ -1,18 +1,14 @@
 /// <reference types="vite/client" />
 
-import { ENEMY_TYPES } from './constants';
-
-export type TOperator = '+' | '-' | '*' | '/';
+import { ENEMY_TYPES, EQUATION_ELEMENT, EQUATION_OPERATOR } from './constants';
 
 export type TDifficulty = {
     label: string;
     difficultyNumber: number;
     description: string;
-    hidableElements: TEquationElement[];
-    operators: TOperator[];
+    hidableElements: EQUATION_ELEMENT[];
+    operators: EQUATION_OPERATOR[];
 };
-
-export type TEquationElement = 'num1' | 'num2' | 'operator' | 'result';
 
 export interface IPathNode {
     x: number;

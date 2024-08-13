@@ -1,26 +1,30 @@
-import { EQUATION_DEFAULT_HIDDEN_COMPONENT } from '../constants';
-import { TOperator, TEquationElement, TDifficulty } from '../vite-env';
+import {
+    EQUATION_DEFAULT_HIDDEN_COMPONENT,
+    EQUATION_ELEMENT,
+    EQUATION_OPERATOR,
+} from '../constants';
+import { TDifficulty } from '../vite-env';
 
 export class Equation {
-    private num1: {
+    private [EQUATION_ELEMENT.operand1]: {
         value: number;
         visible: boolean;
     };
-    private num2: {
+    private [EQUATION_ELEMENT.operand2]: {
         value: number;
         visible: boolean;
     };
-    private operator: {
-        value: TOperator;
+    private [EQUATION_ELEMENT.operator]: {
+        value: EQUATION_OPERATOR;
         visible: boolean;
     };
-    private result: {
+    private [EQUATION_ELEMENT.result]: {
         value: number;
         visible: boolean;
     };
 
     private visibleString: string = '';
-    private hiddenComponent: TEquationElement =
+    private hiddenComponent: EQUATION_ELEMENT =
         EQUATION_DEFAULT_HIDDEN_COMPONENT;
 
     constructor(difficulty: TDifficulty) {
@@ -31,7 +35,7 @@ export class Equation {
         return this.visibleString;
     }
 
-    public getInvisibleElement(): number | TOperator {
+    public getInvisibleElement(): number | EQUATION_OPERATOR {
         return this[this.hiddenComponent].value;
     }
 
@@ -44,20 +48,23 @@ export class Equation {
         };
 
         while (
-            !Number.isInteger(this.num1?.value) ||
-            !Number.isInteger(this.num2?.value) ||
+            !Number.isInteger(this[EQUATION_ELEMENT.operand1]?.value) ||
+            !Number.isInteger(this[EQUATION_ELEMENT.operand2]?.value) ||
             !Number.isInteger(this.result?.value)
         ) {
-            this.num1 = {
+            this[EQUATION_ELEMENT.operand1] = {
                 value: Math.floor(Math.random() * 100),
                 visible: true,
             };
-            this.num2 = {
+            this[EQUATION_ELEMENT.operand2] = {
                 value: Math.floor(Math.random() * 100),
                 visible: true,
             };
-            const testString =
-                '' + this.num1.value + this.operator.value + this.num2.value;
+            const testString = (
+                this[EQUATION_ELEMENT.operand1].value +
+                this.operator.value +
+                this[EQUATION_ELEMENT.operand2].value
+            ).toString();
 
             this.result = {
                 value: eval(testString),
@@ -74,11 +81,15 @@ export class Equation {
     }
 
     private buildVisibleString() {
-        this.visibleString += this.num1.visible ? this.num1.value : ' ? ';
+        this.visibleString += this[EQUATION_ELEMENT.operand1].visible
+            ? this[EQUATION_ELEMENT.operand1].value
+            : ' ? ';
         this.visibleString += this.operator.visible
             ? this.operator.value
             : ' ? ';
-        this.visibleString += this.num2.visible ? this.num2.value : ' ? ';
+        this.visibleString += this[EQUATION_ELEMENT.operand2].visible
+            ? this[EQUATION_ELEMENT.operand2].value
+            : ' ? ';
         this.visibleString += '=';
         this.visibleString += this.result.visible ? this.result.value : ' ? ';
     }

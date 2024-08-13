@@ -1,9 +1,33 @@
-import {
-    IAnimationFrameData,
-    IEnemyData,
-    TDifficulty,
-    TEquationElement,
-} from './vite-env';
+import { IEnemyData, TDifficulty } from './vite-env';
+
+// ENUMS
+export enum EQUATION_ELEMENT {
+    result = 'result',
+    operator = 'operator',
+    operand1 = 'operand1',
+    operand2 = 'operand2',
+}
+export enum ENEMY_TYPES {
+    bigZombie = 'bigZombie',
+}
+
+export enum ENEMY_FACING_DIRECTIONS {
+    down = 'down',
+    left = 'left',
+    right = 'right',
+    up = 'up',
+    idle = 'idle',
+    death = 'death',
+}
+
+export enum EQUATION_OPERATOR {
+    addition = '+',
+    subtraction = '-',
+    multiplication = '*',
+    division = '/',
+}
+
+// TODO: label and separate constants
 
 export const ASSETS_PATH = 'assets';
 export const ASSETS_URL = `/${ASSETS_PATH}`;
@@ -137,7 +161,8 @@ export const HUD_LOADED_EQUATION_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextS
 export const HUD_SCORE_DISPLAY_DIGITS = 6;
 export const HUD_SCORE_DISPLAY_DIGIT_PADDING = 10;
 
-export const EQUATION_DEFAULT_HIDDEN_COMPONENT: TEquationElement = 'result';
+export const EQUATION_DEFAULT_HIDDEN_COMPONENT: EQUATION_ELEMENT =
+    EQUATION_ELEMENT.result;
 
 export const ENEMY_SPEECH_BUBBLE_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextStyle =
     {
@@ -159,19 +184,6 @@ export const ENEMY_SPEECH_BUBBLE_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextS
         },
     };
 export const ENEMY_ANIMATION_FRAME_RATE = 5;
-
-export enum ENEMY_TYPES {
-    bigZombie = 'bigZombie',
-}
-
-export enum ENEMY_FACING_DIRECTIONS {
-    down = 'down',
-    left = 'left',
-    right = 'right',
-    up = 'up',
-    idle = 'idle',
-    death = 'death',
-}
 
 export const ENEMY_DATA: IEnemyData = {
     [ENEMY_TYPES.bigZombie]: {
@@ -280,36 +292,68 @@ export const DIFFICULTIES: TDifficulty[] = [
         label: 'Beginner',
         difficultyNumber: 1,
         description: 'Addition Only',
-        hidableElements: ['num1', 'num2', 'result'],
-        operators: ['+'],
+        hidableElements: [
+            EQUATION_ELEMENT.operand1,
+            EQUATION_ELEMENT.operand2,
+            EQUATION_ELEMENT.result,
+        ],
+        operators: [EQUATION_OPERATOR.addition],
     },
     {
         label: 'Easy',
         difficultyNumber: 2,
         description: 'Addition and Subtraction',
-        hidableElements: ['num1', 'num2', 'result'],
-        operators: ['+', '-'],
+        hidableElements: [
+            EQUATION_ELEMENT.operand1,
+            EQUATION_ELEMENT.operand2,
+            EQUATION_ELEMENT.result,
+        ],
+        operators: [EQUATION_OPERATOR.addition, EQUATION_OPERATOR.subtraction],
     },
     {
         label: 'Medium',
         difficultyNumber: 3,
         description: 'Challenging Addition And Subtraction',
-        hidableElements: ['num1', 'num2', 'operator', 'result'],
-        operators: ['+', '-'],
+        hidableElements: [
+            EQUATION_ELEMENT.operand1,
+            EQUATION_ELEMENT.operand2,
+            EQUATION_ELEMENT.result,
+            EQUATION_ELEMENT.operator,
+        ],
+        operators: [EQUATION_OPERATOR.addition, EQUATION_OPERATOR.subtraction],
     },
     {
         label: 'Hard',
         difficultyNumber: 4,
         description: 'Addition, Subtraction, Multiplication, and Division',
-        hidableElements: ['num1', 'num2', 'result'],
-        operators: ['+', '-', '*', '/'],
+        hidableElements: [
+            EQUATION_ELEMENT.operand1,
+            EQUATION_ELEMENT.operand2,
+            EQUATION_ELEMENT.result,
+        ],
+        operators: [
+            EQUATION_OPERATOR.addition,
+            EQUATION_OPERATOR.subtraction,
+            EQUATION_OPERATOR.multiplication,
+            EQUATION_OPERATOR.division,
+        ],
     },
     {
         label: 'Impossible',
         difficultyNumber: 5,
         description:
             'Challenging Addition, Subtraction, Multiplication, and Division',
-        hidableElements: ['num1', 'num2', 'operator', 'result'],
-        operators: ['+', '-', '*', '/'],
+        hidableElements: [
+            EQUATION_ELEMENT.operand1,
+            EQUATION_ELEMENT.operand2,
+            EQUATION_ELEMENT.result,
+            EQUATION_ELEMENT.operator,
+        ],
+        operators: [
+            EQUATION_OPERATOR.addition,
+            EQUATION_OPERATOR.subtraction,
+            EQUATION_OPERATOR.multiplication,
+            EQUATION_OPERATOR.division,
+        ],
     },
 ];
