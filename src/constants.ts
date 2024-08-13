@@ -110,9 +110,34 @@ export const PLAYER_HEALTH_ORB_SPRITE_FRAMES: Record<number, string> = {
 };
 export const PLAYER_HEALTH_ORB_IMAGE_SIZE = 64;
 
+export const HUD_DIGIT_MAP: Record<string, string> = {
+    '0': 'UI Elements/Zombie-Tileset---_0501',
+    '1': 'UI Elements/Zombie-Tileset---_0502',
+    '2': 'UI Elements/Zombie-Tileset---_0503',
+    '3': 'UI Elements/Zombie-Tileset---_0504',
+    '4': 'UI Elements/Zombie-Tileset---_0505',
+    '5': 'UI Elements/Zombie-Tileset---_0506',
+    '6': 'UI Elements/Zombie-Tileset---_0507',
+    '7': 'UI Elements/Zombie-Tileset---_0508',
+    '8': 'UI Elements/Zombie-Tileset---_0509',
+    '9': 'UI Elements/Zombie-Tileset---_0510',
+};
+export const HUD_RELOAD_STRING = 'RELOAD!';
+export const HUD_LOADED_EQUATION_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextStyle =
+    {
+        fontSize: '15px',
+        stroke: '#000000',
+        strokeThickness: 4,
+    };
+export const HUD_SCORE_DISPLAY_DIGITS = 6;
+export const HUD_SCORE_DISPLAY_DIGIT_PADDING = 10;
+
 // DEPTH LAYERS
 export const PLAYER_SPRITE_DEPTH = 100;
 export const PLAYER_HEALTH_ORB_DEPTH = 100;
+export const HUD_DEPTH = 1600;
+export const LOADED_EQUATION_ELEMENT_DEPTH = 1601;
+export const SCORE_DISPLAY_DEPTH = 1602;
 
 // REGISTRY KEYS
 export const REGISTRY_DIFFICULTY_KEY = 'difficulty';
