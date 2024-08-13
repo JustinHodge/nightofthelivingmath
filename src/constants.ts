@@ -1,4 +1,4 @@
-import { TDifficulty } from './vite-env';
+import { TDifficulty, TEquationElement } from './vite-env';
 
 export const ASSETS_PATH = 'assets';
 export const ASSETS_URL = `/${ASSETS_PATH}`;
@@ -131,6 +131,8 @@ export const HUD_LOADED_EQUATION_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextS
     };
 export const HUD_SCORE_DISPLAY_DIGITS = 6;
 export const HUD_SCORE_DISPLAY_DIGIT_PADDING = 10;
+
+export const EQUATION_DEFAULT_HIDDEN_COMPONENT: TEquationElement = 'result';
 
 // DEPTH LAYERS
 export const PLAYER_SPRITE_DEPTH = 100;

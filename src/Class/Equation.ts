@@ -1,4 +1,5 @@
-import { TDifficulty, TEquationElement, TOperator } from '../scenes/MainMenu';
+import { EQUATION_DEFAULT_HIDDEN_COMPONENT } from '../constants';
+import { TOperator, TEquationElement, TDifficulty } from '../vite-env';
 
 export class Equation {
     private num1: {
@@ -19,7 +20,8 @@ export class Equation {
     };
 
     private visibleString: string = '';
-    private hiddenComponent: TEquationElement = 'result';
+    private hiddenComponent: TEquationElement =
+        EQUATION_DEFAULT_HIDDEN_COMPONENT;
 
     constructor(difficulty: TDifficulty) {
         this.generateEquation(difficulty);
