@@ -1,5 +1,31 @@
-import { IPathNode } from '../scenes/Game';
-import { TOperator } from '../scenes/MainMenu';
+import {
+    ATLAS_KEY,
+    ENEMY_DATA,
+    REGISTRY_DIFFICULTY_KEY,
+    ENEMY_HIT_PLAYER_EVENT_KEY,
+    PLAYER_KILLED_ENEMY_EVENT_KEY,
+    ENEMY_SPEECH_BUBBLE_TEXT_STYLE,
+    ANIMATION_COMPLETED_EVENT_KEY,
+    ENEMY_DEATH_ANIMATION_KEY,
+    ENEMY_WALK_UP_ANIMATION_KEY,
+    ENEMY_WALK_DOWN_ANIMATION_KEY,
+    ENEMY_WALK_LEFT_ANIMATION_KEY,
+    ENEMY_WALK_RIGHT_ANIMATION_KEY,
+    ENEMY_FACING_DIRECTIONS,
+    ENEMY_TYPES,
+    RIGHT_FACING_ANGLES,
+    DOWN_FACING_ANGLES,
+    LEFT_FACING_ANGLES,
+    UP_FACING_ANGLES,
+    ENEMY_ANIMATION_FRAME_RATE,
+    ANIMATION_INFINITE_REPEAT,
+} from '../constants';
+import {
+    generateFrameKeys,
+    generateFrameObjects,
+} from '../utils/frameGenerators';
+import { IPathNode, TOperator } from '../vite-env';
+
 import { Equation } from './Equation';
 
 interface IConfig {
@@ -16,21 +42,32 @@ interface ICoordinate {
 export class Enemy extends Phaser.Physics.Arcade.Sprite {
     private path: ICoordinate[] = [];
     private speechBubble: Phaser.GameObjects.Text;
-    private facingDirection: 'up' | 'down' | 'left' | 'right' = 'down';
+    private facingDirection: ENEMY_FACING_DIRECTIONS =
+        ENEMY_FACING_DIRECTIONS.down;
     private equation: Equation | undefined;
     private isDead = false;
+    private enemyType: ENEMY_TYPES = ENEMY_TYPES.bigZombie;
 
     constructor({ scene, path, equation }: IConfig) {
         if (path.length < 1) {
             throw new Error('Path must have at least one node');
         }
 
-        const key = 'atlas';
-        const framePrefix =
-            'Big Zombie Walking Animation Frames/Zombie-Tileset---_';
-        const frame = framePrefix + '0412';
+        const enemyType = ENEMY_TYPES.bigZombie;
 
-        super(scene, path[0].x, path[0].y, key, frame);
+        super(
+            scene,
+            path[0].x,
+            path[0].y,
+            ATLAS_KEY,
+            generateFrameKeys(
+                ENEMY_DATA[enemyType].animationFrameData[
+                    ENEMY_FACING_DIRECTIONS.down
+                ]
+            )[0]
+        );
+
+        this.facingDirection = ENEMY_FACING_DIRECTIONS.down;
 
         scene.physics.world.enableBody(this, 0);
 
@@ -50,7 +87,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     public getScoreValue() {
         return (
-            100 * this.scene.registry.get('difficulty').difficultyNumber ?? 1
+            ENEMY_DATA[this.enemyType].getScoreMultiplier() *
+            this.scene.registry.get(REGISTRY_DIFFICULTY_KEY).difficultyNumber
         );
     }
 
@@ -65,16 +103,10 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         if (deltaX <= 1 && deltaY <= 1) {
             this.path.shift();
             if (this.path.length > 0) {
-                const deltaAngle = Phaser.Math.Angle.BetweenPoints(
-                    { x: this.x, y: this.y },
-                    { x: this.path[0].x, y: this.path[0].y }
-                );
+                const currentPoint = { x: this.x, y: this.y };
+                const FuturePoint = { x: this.path[0].x, y: this.path[0].y };
 
-                this.setFacingDirection(
-                    Phaser.Math.RadToDeg(
-                        Phaser.Math.Angle.Normalize(deltaAngle)
-                    )
-                );
+                this.setFacingDirection(currentPoint, FuturePoint);
             }
         }
     }
@@ -89,7 +121,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         if (this.path.length <= 0 && !this.isDead) {
             this.kill();
             this.scene.events.emit(
-                'enemyHitPlayer',
+                ENEMY_HIT_PLAYER_EVENT_KEY,
                 this.equation?.getInvisibleElement()
             );
         }
@@ -101,7 +133,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.equation?.getInvisibleElement() === equationComponent
         ) {
             this.kill();
-            this.scene.events.emit('playerKilledEnemy', {
+            this.scene.events.emit(PLAYER_KILLED_ENEMY_EVENT_KEY, {
                 score: this.getScoreValue(),
             });
         }
@@ -110,12 +142,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     private buildSpeechBubble() {
-        const bubbleXPadding = 1;
-        const bubbleYPadding = 1;
         const bubbleX = this.x - this.width / 2;
         const bubbleY = this.y - this.height / 2;
-        const bubbleColor = '#ffffff';
-        const bubbleAlpha = '99';
 
         const enemySpeechBubbleText = this.equation?.getVisibleEquation() ?? '';
 
@@ -123,24 +151,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
             bubbleX,
             bubbleY,
             enemySpeechBubbleText ?? 'FREEBIE',
-            {
-                padding: {
-                    x: bubbleXPadding,
-                    y: bubbleYPadding,
-                },
-                backgroundColor: bubbleColor + bubbleAlpha,
-                color: '#000000',
-                fontSize: '1.5rem',
-                align: 'center',
-                shadow: {
-                    offsetX: 2,
-                    offsetY: 2,
-                    blur: 2,
-                    color: '#000000',
-                    fill: true,
-                    stroke: true,
-                },
-            }
+            ENEMY_SPEECH_BUBBLE_TEXT_STYLE
         );
     }
 
@@ -159,68 +170,84 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     private move() {
         if (this.isDead) {
-            this.setVelocity(0, 0);
+            this.setVelocity(0);
             return;
         }
 
-        const { x: targetX, y: targetY } = this.getNextPathNode() ?? {
-            x: 10,
-            y: 10,
-        };
+        const { x: targetX, y: targetY } = this.getNextPathNode();
         this.scene.physics.moveTo(this, targetX, targetY);
         this.updateNextPathNode();
     }
 
     private kill() {
         this.isDead = true;
-        this.play('death');
+        this.play(ENEMY_DEATH_ANIMATION_KEY);
         this.on(
-            'animationcomplete',
+            ANIMATION_COMPLETED_EVENT_KEY,
             () => {
                 this.speechBubble.destroy();
                 this.destroy();
             },
-            'death'
+            ENEMY_DEATH_ANIMATION_KEY
         );
     }
 
-    private setFacingDirection(deltaAngle: number) {
-        if (deltaAngle > 315 || deltaAngle < 45) {
-            this.facingDirection = 'right';
+    private setFacingDirection(
+        currentPoint: { x: number; y: number },
+        futurePoint: { x: number; y: number }
+    ) {
+        const deltaAngle = Phaser.Math.Angle.Normalize(
+            Phaser.Math.Angle.BetweenPoints(currentPoint, futurePoint)
+        );
+
+        if (
+            deltaAngle >= RIGHT_FACING_ANGLES.min ||
+            deltaAngle < RIGHT_FACING_ANGLES.max
+        ) {
+            this.facingDirection = ENEMY_FACING_DIRECTIONS.right;
         }
 
-        if (deltaAngle > 45 && deltaAngle < 135) {
-            this.facingDirection = 'down';
+        if (
+            deltaAngle >= DOWN_FACING_ANGLES.min &&
+            deltaAngle < DOWN_FACING_ANGLES.max
+        ) {
+            this.facingDirection = ENEMY_FACING_DIRECTIONS.down;
         }
 
-        if (deltaAngle > 135 && deltaAngle < 225) {
-            this.facingDirection = 'left';
+        if (
+            deltaAngle >= LEFT_FACING_ANGLES.min &&
+            deltaAngle < LEFT_FACING_ANGLES.max
+        ) {
+            this.facingDirection = ENEMY_FACING_DIRECTIONS.left;
         }
 
-        if (deltaAngle > 225 && deltaAngle < 315) {
-            this.facingDirection = 'up';
+        if (
+            deltaAngle >= UP_FACING_ANGLES.min &&
+            deltaAngle < UP_FACING_ANGLES.max
+        ) {
+            this.facingDirection = ENEMY_FACING_DIRECTIONS.up;
         }
 
         this.setAnimation(this.facingDirection);
     }
 
-    private setAnimation(direction: 'up' | 'down' | 'left' | 'right' | 'idle') {
+    private setAnimation(direction: ENEMY_FACING_DIRECTIONS) {
         switch (direction) {
-            case 'up':
-                this.play('walkup');
+            case ENEMY_FACING_DIRECTIONS.up:
+                this.play(ENEMY_WALK_UP_ANIMATION_KEY);
                 break;
-            case 'down':
-                this.play('walkdown');
+            case ENEMY_FACING_DIRECTIONS.down:
+                this.play(ENEMY_WALK_DOWN_ANIMATION_KEY);
                 break;
-            case 'left':
-                this.play('walkleft');
+            case ENEMY_FACING_DIRECTIONS.left:
+                this.play(ENEMY_WALK_LEFT_ANIMATION_KEY);
                 this.flipX = false;
                 break;
-            case 'right':
-                this.play('walkleft');
+            case ENEMY_FACING_DIRECTIONS.right:
+                this.play(ENEMY_WALK_RIGHT_ANIMATION_KEY);
                 this.flipX = true;
                 break;
-            case 'idle':
+            case ENEMY_FACING_DIRECTIONS.idle:
                 this.stop();
                 break;
             default:
@@ -229,49 +256,58 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     private createAnims() {
-        const PREFIX = 'Big Zombie Walking Animation Frames/Zombie-Tileset---_';
         this.anims.create({
-            key: 'walkdown',
-            frames: this.anims.generateFrameNames('atlas', {
-                prefix: PREFIX,
-                start: 412,
-                end: 414,
-                zeroPad: 4,
-            }),
-            frameRate: 5,
-            repeat: -1,
+            key: ENEMY_WALK_DOWN_ANIMATION_KEY,
+            frames: generateFrameObjects(
+                ENEMY_DATA[ENEMY_TYPES.bigZombie].animationFrameData[
+                    ENEMY_FACING_DIRECTIONS.down
+                ]
+            ),
+            frameRate: ENEMY_ANIMATION_FRAME_RATE,
+            repeat: ANIMATION_INFINITE_REPEAT,
         });
 
         this.anims.create({
-            key: 'walkup',
-            frames: this.anims.generateFrameNames('atlas', {
-                prefix: PREFIX,
-                zeroPad: 4,
-                frames: [418, 419, 420],
-            }),
-            frameRate: 5,
-            repeat: -1,
+            key: ENEMY_WALK_UP_ANIMATION_KEY,
+            frames: generateFrameObjects(
+                ENEMY_DATA[ENEMY_TYPES.bigZombie].animationFrameData[
+                    ENEMY_FACING_DIRECTIONS.up
+                ]
+            ),
+            frameRate: ENEMY_ANIMATION_FRAME_RATE,
+            repeat: ANIMATION_INFINITE_REPEAT,
         });
 
         this.anims.create({
-            key: 'walkleft',
-            frames: this.anims.generateFrameNames('atlas', {
-                prefix: PREFIX,
-                zeroPad: 4,
-                frames: [415, 416, 417],
-            }),
-            frameRate: 5,
-            repeat: -1,
+            key: ENEMY_WALK_LEFT_ANIMATION_KEY,
+            frames: generateFrameObjects(
+                ENEMY_DATA[ENEMY_TYPES.bigZombie].animationFrameData[
+                    ENEMY_FACING_DIRECTIONS.left
+                ]
+            ),
+            frameRate: ENEMY_ANIMATION_FRAME_RATE,
+            repeat: ANIMATION_INFINITE_REPEAT,
         });
 
         this.anims.create({
-            key: 'death',
-            frames: this.anims.generateFrameNames('atlas', {
-                prefix: 'Damaged Big Zombie Animation Frames/Zombie-Tileset---_',
-                zeroPad: 4,
-                frames: [421, 422, 421, 422, 421, 422, 423],
-            }),
-            frameRate: 5,
+            key: ENEMY_WALK_RIGHT_ANIMATION_KEY,
+            frames: generateFrameObjects(
+                ENEMY_DATA[ENEMY_TYPES.bigZombie].animationFrameData[
+                    ENEMY_FACING_DIRECTIONS.right
+                ]
+            ),
+            frameRate: ENEMY_ANIMATION_FRAME_RATE,
+            repeat: ANIMATION_INFINITE_REPEAT,
+        });
+
+        this.anims.create({
+            key: ENEMY_DEATH_ANIMATION_KEY,
+            frames: generateFrameObjects(
+                ENEMY_DATA[ENEMY_TYPES.bigZombie].animationFrameData[
+                    ENEMY_FACING_DIRECTIONS.death
+                ]
+            ),
+            frameRate: ENEMY_ANIMATION_FRAME_RATE,
             repeat: 0,
         });
     }

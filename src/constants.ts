@@ -1,4 +1,9 @@
-import { TDifficulty, TEquationElement } from './vite-env';
+import {
+    IAnimationFrameData,
+    IEnemyData,
+    TDifficulty,
+    TEquationElement,
+} from './vite-env';
 
 export const ASSETS_PATH = 'assets';
 export const ASSETS_URL = `/${ASSETS_PATH}`;
@@ -134,6 +139,78 @@ export const HUD_SCORE_DISPLAY_DIGIT_PADDING = 10;
 
 export const EQUATION_DEFAULT_HIDDEN_COMPONENT: TEquationElement = 'result';
 
+export const ENEMY_SPEECH_BUBBLE_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextStyle =
+    {
+        padding: {
+            x: 1,
+            y: 1,
+        },
+        backgroundColor: '#ffffff99',
+        color: '#000000',
+        fontSize: '1.5rem',
+        align: 'center',
+        shadow: {
+            offsetX: 2,
+            offsetY: 2,
+            blur: 2,
+            color: '#000000',
+            fill: true,
+            stroke: true,
+        },
+    };
+export const ENEMY_ANIMATION_FRAME_RATE = 5;
+
+export enum ENEMY_TYPES {
+    bigZombie = 'bigZombie',
+}
+
+export enum ENEMY_FACING_DIRECTIONS {
+    down = 'down',
+    left = 'left',
+    right = 'right',
+    up = 'up',
+    idle = 'idle',
+    death = 'death',
+}
+
+export const ENEMY_DATA: IEnemyData = {
+    [ENEMY_TYPES.bigZombie]: {
+        animationFrameData: {
+            [ENEMY_FACING_DIRECTIONS.down]: {
+                prefix: 'Big Zombie Walking Animation Frames/Zombie-Tileset---_',
+                digitsInFrame: 4,
+                frameSet: [412, 413, 414],
+            },
+            [ENEMY_FACING_DIRECTIONS.left]: {
+                prefix: 'Big Zombie Walking Animation Frames/Zombie-Tileset---_',
+                digitsInFrame: 4,
+                frameSet: [415, 416, 417],
+            },
+            [ENEMY_FACING_DIRECTIONS.right]: {
+                prefix: 'Big Zombie Walking Animation Frames/Zombie-Tileset---_',
+                digitsInFrame: 4,
+                frameSet: [415, 416, 417],
+            },
+            [ENEMY_FACING_DIRECTIONS.up]: {
+                prefix: 'Big Zombie Walking Animation Frames/Zombie-Tileset---_',
+                digitsInFrame: 3,
+                frameSet: [418, 419, 420],
+            },
+            [ENEMY_FACING_DIRECTIONS.death]: {
+                prefix: 'Damaged Big Zombie Animation Frames/Zombie-Tileset---_',
+                digitsInFrame: 4,
+                frameSet: [421, 422, 421, 422, 421, 422, 423],
+            },
+            [ENEMY_FACING_DIRECTIONS.idle]: {
+                prefix: 'Big Zombie Walking Animation Frames/Zombie-Tileset---_',
+                digitsInFrame: 4,
+                frameSet: [418],
+            },
+        },
+        getScoreMultiplier: () => 1,
+    },
+};
+
 // DEPTH LAYERS
 export const PLAYER_SPRITE_DEPTH = 100;
 export const PLAYER_HEALTH_ORB_DEPTH = 100;
@@ -148,6 +225,11 @@ export const REGISTRY_DIFFICULTY_KEY = 'difficulty';
 export const PLAYER_IDLE_ANIMATION_KEY = 'PlayerIdleAnimation';
 export const PLAYER_MISS_ANIMATION_KEY = 'PlayerMissAnimation';
 export const PLAYER_HIT_ANIMATION_KEY = 'PlayerHitAnimation';
+export const ENEMY_DEATH_ANIMATION_KEY = 'EnemyDeathAnimation';
+export const ENEMY_WALK_DOWN_ANIMATION_KEY = 'EnemyWalkDownAnimation';
+export const ENEMY_WALK_LEFT_ANIMATION_KEY = 'EnemyWalkLeftAnimation';
+export const ENEMY_WALK_RIGHT_ANIMATION_KEY = 'EnemyWalkRightAnimation';
+export const ENEMY_WALK_UP_ANIMATION_KEY = 'EnemyWalkUpAnimation';
 
 // EVENT KEYS
 export const LOAD_PROGRESS_EVENT_KEY = 'progress';
@@ -155,6 +237,7 @@ export const POINTER_DOWN_EVENT_KEY = 'pointerdown';
 export const POINTER_OVER_EVENT_KEY = 'pointerover';
 export const POINTER_OUT_EVENT_KEY = 'pointerout';
 export const POINTER_MOVE_EVENT_KEY = 'pointermove';
+export const ANIMATION_COMPLETED_EVENT_KEY = 'animationcomplete';
 export const GAME_OBJECT_DOWN_EVENT_KEY = 'gameobjectdown';
 export const ENEMY_HIT_PLAYER_EVENT_KEY = 'enemyHitPlayer';
 export const PLAYER_KILLED_ENEMY_EVENT_KEY = 'playerKilledEnemy';
@@ -170,8 +253,28 @@ export const BOOT_SCENE_KEY = 'Boot';
 
 // MATH CONSTANTS
 export const MILLIS_IN_SECOND = 1000;
+export const RIGHT_FACING_ANGLES = {
+    max: Math.PI / 4,
+    min: 2 * Math.PI - Math.PI / 4,
+};
+
+export const DOWN_FACING_ANGLES = {
+    max: Math.PI / 2 + Math.PI / 4,
+    min: Math.PI / 4,
+};
+
+export const LEFT_FACING_ANGLES = {
+    max: Math.PI + Math.PI / 4,
+    min: Math.PI / 2 + Math.PI / 4,
+};
+
+export const UP_FACING_ANGLES = {
+    max: 2 * Math.PI - Math.PI / 4,
+    min: Math.PI + Math.PI / 4,
+};
 
 // GAME_CONSTANTS
+export const ANIMATION_INFINITE_REPEAT = -1;
 export const DIFFICULTIES: TDifficulty[] = [
     {
         label: 'Beginner',
