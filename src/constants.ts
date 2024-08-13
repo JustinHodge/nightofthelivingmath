@@ -219,7 +219,7 @@ export const ENEMY_DATA: IEnemyData = {
                 frameSet: [418],
             },
         },
-        getScoreMultiplier: () => 1,
+        getScoreMultiplier: () => 100,
     },
 };
 

@@ -26,7 +26,6 @@ import { Enemy } from './Enemy';
 export class Player extends Phaser.Physics.Arcade.Sprite {
     private health = PLAYER_MAX_HEALTH;
     private healthOrbs: Phaser.GameObjects.Image[] = [];
-    private currentScore = 0;
 
     constructor(scene: Phaser.Scene) {
         super(
@@ -61,10 +60,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.createAnims();
         this.play(PLAYER_IDLE_ANIMATION_KEY);
-    }
-
-    public addScore(score: number) {
-        this.currentScore += score;
     }
 
     public isDead() {

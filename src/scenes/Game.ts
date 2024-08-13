@@ -37,7 +37,8 @@ export class Game extends Scene {
     private currentEquationElementDisplay: Phaser.GameObjects.Text;
     private difficulty: TDifficulty;
     private lastSpawnTime: number;
-    private hud: Phaser.GameObjects.Image;
+    private hud: Hud;
+    private currentScore = 0;
 
     private PATH_NODES: IPathNode[];
 
@@ -97,6 +98,11 @@ export class Game extends Scene {
         this.displayCurrentEquationElement();
     }
 
+    private addScore(score: number) {
+        this.currentScore += score;
+        this.hud.setScore(this.currentScore);
+    }
+
     private createEventHandlers() {
         this.events.on(
             ENEMY_HIT_PLAYER_EVENT_KEY,
@@ -109,7 +115,7 @@ export class Game extends Scene {
         this.events.on(
             PLAYER_KILLED_ENEMY_EVENT_KEY,
             (data: { score: number }) => {
-                this.player.addScore(data.score);
+                this.addScore(data.score);
                 this.deleteCurrentEquationElement();
             }
         );

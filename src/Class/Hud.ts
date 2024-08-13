@@ -15,7 +15,6 @@ import {
 } from '../constants';
 
 export class Hud extends Phaser.GameObjects.Image {
-    private score: number = 0;
     private currentItem: string | null = null;
     private scoreDisplay: Phaser.GameObjects.Image[] = [];
     private loadedEquationElement: Phaser.GameObjects.Text;
@@ -35,8 +34,16 @@ export class Hud extends Phaser.GameObjects.Image {
     }
 
     public setScore(newScore: number) {
-        this.score = newScore;
-        this.updateScoreDisplay();
+        const scoreString = newScore
+            .toString()
+            .padStart(HUD_SCORE_DISPLAY_DIGITS, '0');
+
+        for (let i = 0; i < HUD_SCORE_DISPLAY_DIGITS; i++) {
+            this.scoreDisplay[i].setTexture(
+                ATLAS_KEY,
+                HUD_DIGIT_MAP[scoreString[i] ?? '0']
+            );
+        }
     }
 
     public setCurrentItem(item: string | null) {
@@ -74,15 +81,6 @@ export class Hud extends Phaser.GameObjects.Image {
         this.updateLoadedEquationElement(null);
     }
 
-    private updateScoreDisplay() {
-        for (let i = 0; i < this.scoreDisplay.length; i++) {
-            this.scoreDisplay[i].setTexture(
-                ATLAS_KEY,
-                HUD_DIGIT_MAP[this.score.toString()[i] ?? '0']
-            );
-        }
-    }
-
     private initScoreDisplay() {
         const baseLocation = 150;
 
@@ -111,6 +109,6 @@ export class Hud extends Phaser.GameObjects.Image {
             this.scoreDisplay.push(newDigit);
         }
 
-        this.updateScoreDisplay();
+        this.setScore(0);
     }
 }
