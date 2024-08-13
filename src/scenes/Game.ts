@@ -1,17 +1,30 @@
 import { Scene } from 'phaser';
-import { gameSize } from '../main';
 import { Enemy } from '../Class/Enemy';
 import { Player } from '../Class/Player';
 import { Equation } from '../Class/Equation';
-import { TDifficulty, TOperator } from './MainMenu';
 import { Hud } from '../Class/Hud';
+import {
+    BACKGROUND_KEY,
+    BASE_ENEMY_DAMAGE,
+    CURRENT_EQUATION_ELEMENT_DISPLAY_X,
+    CURRENT_EQUATION_ELEMENT_DISPLAY_Y,
+    CURRENT_EQUATION_ELEMENT_TEXT_STYLE,
+    ENEMY_HIT_PLAYER_EVENT_KEY,
+    EQUATION_OPERATOR,
+    GAME_CURSOR,
+    GAME_MIDDLE_X,
+    GAME_MIDDLE_Y,
+    GAME_OVER_SCENE_KEY,
+    GAME_SCENE_KEY,
+    MAP_NODES_KEY,
+    MILLIS_IN_SECOND,
+    PLAYER_HIT_ENEMY_EVENT_KEY,
+    PLAYER_KILLED_ENEMY_EVENT_KEY,
+    PLAYER_RELOAD_EVENT_KEY,
+    REGISTRY_DIFFICULTY_KEY,
+} from '../constants';
+import { TDifficulty, IPathNode } from '../vite-env';
 
-export interface IPathNode {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-}
 export class Game extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
@@ -19,8 +32,8 @@ export class Game extends Scene {
 
     private enemies: Enemy[] = [];
     private player: Player;
-    private invisibleEquationElements: (number | TOperator)[] = [];
-    private currentEquationElement: number | TOperator;
+    private invisibleEquationElements: (number | EQUATION_OPERATOR)[] = [];
+    private currentEquationElement: number | EQUATION_OPERATOR;
     private currentEquationElementDisplay: Phaser.GameObjects.Text;
     private difficulty: TDifficulty;
     private lastSpawnTime: number;
@@ -29,20 +42,20 @@ export class Game extends Scene {
     private PATH_NODES: IPathNode[];
 
     constructor() {
-        super('Game');
+        super(GAME_SCENE_KEY);
     }
 
     create() {
-        this.difficulty = this.registry.get('difficulty');
-        this.PATH_NODES = this.cache.json.get('mapNodes');
+        this.difficulty = this.registry.get(REGISTRY_DIFFICULTY_KEY);
+        this.PATH_NODES = this.cache.json.get(MAP_NODES_KEY);
         this.lastSpawnTime = this.time.now;
 
         this.camera = this.cameras.main;
 
         this.background = this.add.image(
-            gameSize.middleX,
-            gameSize.middleY,
-            'background'
+            GAME_MIDDLE_X,
+            GAME_MIDDLE_Y,
+            BACKGROUND_KEY
         );
 
         this.hud = new Hud(this);
@@ -69,15 +82,15 @@ export class Game extends Scene {
     private checkGameOver() {
         if (this.player.isDead()) {
             this.enemies = [];
-            this.scene.stop('Game');
-            this.scene.start('GameOver');
+            this.scene.stop(GAME_SCENE_KEY);
+            this.scene.start(GAME_OVER_SCENE_KEY);
         }
     }
 
     private createPlayer() {
-        this.player = new Player(this, 300, 300);
+        this.player = new Player(this);
 
-        this.input.setDefaultCursor('none');
+        this.input.setDefaultCursor(GAME_CURSOR);
 
         this.createEventHandlers();
 
@@ -86,23 +99,26 @@ export class Game extends Scene {
 
     private createEventHandlers() {
         this.events.on(
-            'enemyHitPlayer',
-            (enemyHiddenElement: number | TOperator) => {
-                this.player.takeDamage(1);
+            ENEMY_HIT_PLAYER_EVENT_KEY,
+            (enemyHiddenElement: number | EQUATION_OPERATOR) => {
+                this.player.takeDamage(BASE_ENEMY_DAMAGE);
                 this.deleteEquationElement(enemyHiddenElement);
             }
         );
 
-        this.events.on('playerKilledEnemy', (data: { score: number }) => {
-            this.player.addScore(data.score);
-            this.deleteCurrentEquationElement();
-        });
+        this.events.on(
+            PLAYER_KILLED_ENEMY_EVENT_KEY,
+            (data: { score: number }) => {
+                this.player.addScore(data.score);
+                this.deleteCurrentEquationElement();
+            }
+        );
 
-        this.events.on('playerHitEnemy', (enemy: Enemy) => {
+        this.events.on(PLAYER_HIT_ENEMY_EVENT_KEY, (enemy: Enemy) => {
             enemy.attemptKill(this.currentEquationElement);
         });
 
-        this.events.on('playerReload', () => {
+        this.events.on(PLAYER_RELOAD_EVENT_KEY, () => {
             this.updateCurrentEquationElement();
         });
     }
@@ -111,7 +127,7 @@ export class Game extends Scene {
         this.deleteEquationElement(this.currentEquationElement);
     }
 
-    private deleteEquationElement(elementToDelete: number | TOperator) {
+    private deleteEquationElement(elementToDelete: number | EQUATION_OPERATOR) {
         for (const element of this.invisibleEquationElements) {
             if (element === elementToDelete) {
                 this.invisibleEquationElements.splice(
@@ -125,17 +141,14 @@ export class Game extends Scene {
         this.updateCurrentEquationElement();
     }
 
+    // TOOD: MOVE THIS TO HUD?
     private displayCurrentEquationElement() {
-        this.currentEquationElementDisplay = this.add.text(750, 700, '', {
-            fontSize: '20px',
-            backgroundColor: '#cccccccc',
-            padding: {
-                x: 10,
-                y: 5,
-            },
-            stroke: '#000000',
-            strokeThickness: 4,
-        });
+        this.currentEquationElementDisplay = this.add.text(
+            CURRENT_EQUATION_ELEMENT_DISPLAY_X,
+            CURRENT_EQUATION_ELEMENT_DISPLAY_Y,
+            '',
+            CURRENT_EQUATION_ELEMENT_TEXT_STYLE
+        );
 
         this.updateEquationElementDisplay();
     }
@@ -185,7 +198,7 @@ export class Game extends Scene {
 
     private shouldSpawn() {
         const elapsedMillis = this.time.now - this.lastSpawnTime;
-        const secondsSinceLastSpawn = elapsedMillis / 1000;
+        const secondsSinceLastSpawn = elapsedMillis / MILLIS_IN_SECOND;
         const difficultyModifier = 2 / this.difficulty.difficultyNumber;
         const maxTimeSinceLastSpawn = 3 * difficultyModifier;
 

@@ -1,118 +1,99 @@
 import { Scene, GameObjects } from 'phaser';
-
-export type TOperator = '+' | '-' | '*' | '/';
-
-export type TDifficulty = {
-    label: string;
-    difficultyNumber: number;
-    description: string;
-    hidableElements: TEquationElement[];
-    operators: TOperator[];
-};
-
-export type TEquationElement = 'num1' | 'num2' | 'operator' | 'result';
+import {
+    BACKGROUND_KEY,
+    GAME_MIDDLE_X,
+    GAME_MIDDLE_Y,
+    MAIN_MENU_BACKGROUND_ALPHA,
+    MAIN_MENU_SCENE_KEY,
+    MAIN_MENU_BACKGROUND_TINT,
+    MAIN_MENU_CURSOR,
+    MAIN_MENU_CONTAINER_X,
+    MAIN_MENU_CONTAINER_Y,
+    MAIN_MENU_CONTAINER_WIDTH,
+    MAIN_MENU_CONTAINER_HEIGHT,
+    MAIN_MENU_CONTAINER_FILL_COLOR,
+    MAIN_MENU_CONTAINER_FILL_ALPHA,
+    MAIN_MENU_CONTAINER_STROKE_COLOR,
+    MAIN_MENU_CONTAINER_STROKE_WIDTH,
+    LOGO_KEY,
+    DIFFICULTIES,
+    MAIN_MENU_DIFFICULTY_SELECTOR_PADDING_Y,
+    POINTER_DOWN_EVENT_KEY,
+    POINTER_OVER_EVENT_KEY,
+    GAME_SCENE_KEY,
+    POINTER_OUT_EVENT_KEY,
+    REGISTRY_DIFFICULTY_KEY,
+    MAIN_MENU_DIFFICULTY_SELECTOR_HIGHLIGHT_COLOR,
+    MAIN_MENU_DIFFICULTY_SELECTOR_TEXT_STYLE,
+} from '../constants';
 
 export class MainMenu extends Scene {
     background: GameObjects.Image;
     logo: GameObjects.Image;
     title: GameObjects.Text;
+    menuContainer: GameObjects.Rectangle;
 
     constructor() {
-        super('MainMenu');
+        super(MAIN_MENU_SCENE_KEY);
     }
 
     create() {
-        this.input.setDefaultCursor('auto');
+        this.input.setDefaultCursor(MAIN_MENU_CURSOR);
         this.background = this.add
-            .image(512, 384, 'background')
-            .setTint(0xdddddd)
-            .setAlpha(0.7);
+            .image(GAME_MIDDLE_X, GAME_MIDDLE_Y, BACKGROUND_KEY)
+            .setTint(MAIN_MENU_BACKGROUND_TINT)
+            .setAlpha(MAIN_MENU_BACKGROUND_ALPHA);
 
-        this.add
+        this.menuContainer = this.add
             .rectangle(
-                this.game.canvas.width / 2,
-                this.game.canvas.height / 2,
-                600,
-                600,
-                0xcccccc,
-                0.5
+                MAIN_MENU_CONTAINER_X,
+                MAIN_MENU_CONTAINER_Y,
+                MAIN_MENU_CONTAINER_WIDTH,
+                MAIN_MENU_CONTAINER_HEIGHT,
+                MAIN_MENU_CONTAINER_FILL_COLOR,
+                MAIN_MENU_CONTAINER_FILL_ALPHA
             )
-            .setOrigin(0.5, 0.5)
-            .setStrokeStyle(3, 0x000000);
+            .setStrokeStyle(
+                MAIN_MENU_CONTAINER_STROKE_WIDTH,
+                MAIN_MENU_CONTAINER_STROKE_COLOR
+            );
 
-        this.logo = this.add.image(512, 300, 'logo');
+        this.logo = this.add.image(GAME_MIDDLE_X, GAME_MIDDLE_Y, LOGO_KEY);
+        this.logo.setY(this.logo.y - this.logo.displayHeight / 2);
 
-        const difficulties: TDifficulty[] = [
-            {
-                label: 'Beginner',
-                difficultyNumber: 1,
-                description: 'Addition Only',
-                hidableElements: ['num1', 'num2', 'result'],
-                operators: ['+'],
-            },
-            {
-                label: 'Easy',
-                difficultyNumber: 2,
-                description: 'Addition and Subtraction',
-                hidableElements: ['num1', 'num2', 'result'],
-                operators: ['+', '-'],
-            },
-            {
-                label: 'Medium',
-                difficultyNumber: 3,
-                description: 'Challenging Addition And Subtraction',
-                hidableElements: ['num1', 'num2', 'operator', 'result'],
-                operators: ['+', '-'],
-            },
-            {
-                label: 'Hard',
-                difficultyNumber: 4,
-                description:
-                    'Addition, Subtraction, Multiplication, and Division',
-                hidableElements: ['num1', 'num2', 'result'],
-                operators: ['+', '-', '*', '/'],
-            },
-            {
-                label: 'Impossible',
-                difficultyNumber: 5,
-                description:
-                    'Challenging Addition, Subtraction, Multiplication, and Division',
-                hidableElements: ['num1', 'num2', 'operator', 'result'],
-                operators: ['+', '-', '*', '/'],
-            },
-        ];
+        this.registry.set(REGISTRY_DIFFICULTY_KEY, DIFFICULTIES[0]);
 
-        this.data.set('difficulties', difficulties);
-        this.data.set('difficulty', difficulties[0]);
-
-        for (const difficulty of difficulties) {
+        for (let i = 0; i < DIFFICULTIES.length; i++) {
+            const difficulty = DIFFICULTIES[i];
             const gameSelector = this.add
                 .text(
-                    512,
-                    450 + 30 * difficulty.difficultyNumber,
+                    GAME_MIDDLE_X,
+                    GAME_MIDDLE_Y + 30 * difficulty.difficultyNumber,
                     difficulty.label,
-                    {
-                        fontFamily: 'Arial Black',
-                        fontSize: 24,
-                        color: '#ffffff',
-                        stroke: '#000000',
-                        strokeThickness: 8,
-                        align: 'center',
-                    }
+                    MAIN_MENU_DIFFICULTY_SELECTOR_TEXT_STYLE
                 )
                 .setOrigin(0.5)
                 .setInteractive();
 
-            gameSelector.once('pointerdown', () => {
-                this.registry.set('difficulty', difficulty);
-                this.scene.start('Game');
+            gameSelector.setY(
+                gameSelector.y +
+                    (gameSelector.displayHeight / 2 +
+                        MAIN_MENU_DIFFICULTY_SELECTOR_PADDING_Y * 2) *
+                        i
+            );
+
+            gameSelector.once(POINTER_DOWN_EVENT_KEY, () => {
+                this.registry.set(REGISTRY_DIFFICULTY_KEY, difficulty);
+                this.scene.start(GAME_SCENE_KEY);
             });
 
-            gameSelector.on('pointerover', () => {
-                gameSelector.setTint(0xa60000);
+            gameSelector.on(POINTER_OVER_EVENT_KEY, () => {
+                gameSelector.setTint(
+                    MAIN_MENU_DIFFICULTY_SELECTOR_HIGHLIGHT_COLOR
+                );
             });
 
-            gameSelector.on('pointerout', () => {
+            gameSelector.on(POINTER_OUT_EVENT_KEY, () => {
                 gameSelector.clearTint();
             });
         }
