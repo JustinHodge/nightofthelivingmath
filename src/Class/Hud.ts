@@ -1,24 +1,30 @@
 import {
     ATLAS_KEY,
-    EQUATION_ELEMENT,
+    EQUATION_BACKGROUND_MARGIN,
+    EQUATION_OPERATOR,
     GAME_HEIGHT,
     GAME_WIDTH,
     HUD_DEPTH,
     HUD_DIGIT_MAP,
     HUD_KEY,
     HUD_LOADED_EQUATION_TEXT_STYLE,
-    HUD_RELOAD_STRING,
+    HUD_NO_ENEMY_STRING,
     HUD_SCORE_DISPLAY_DIGIT_PADDING,
     HUD_SCORE_DISPLAY_DIGITS,
+    ITEM_EMPTY_BACKGROUND_IMAGE,
+    LOADED_EQUATION_BACKGROUND_IMAGE,
     LOADED_EQUATION_ELEMENT_DEPTH,
+    PLAYER_RELOAD_EVENT_KEY,
+    POINTER_DOWN_EVENT_KEY,
     SCORE_DISPLAY_DEPTH,
 } from '../constants';
 
 export class Hud extends Phaser.GameObjects.Image {
-    private score: number = 0;
     private currentItem: string | null = null;
     private scoreDisplay: Phaser.GameObjects.Image[] = [];
     private loadedEquationElement: Phaser.GameObjects.Text;
+    private loadedEquationContainer: Phaser.GameObjects.Container;
+    private itemContainer: Phaser.GameObjects.Container;
 
     constructor(scene: Phaser.Scene) {
         super(scene, 0, 0, HUD_KEY);
@@ -29,14 +35,23 @@ export class Hud extends Phaser.GameObjects.Image {
         this.setDepth(HUD_DEPTH);
 
         this.initScoreDisplay();
-        this.initLoadedEquationElement();
+        this.initLoadedEquationContainer();
+        this.initItemContainer();
 
         scene.add.existing(this);
     }
 
     public setScore(newScore: number) {
-        this.score = newScore;
-        this.updateScoreDisplay();
+        const scoreString = newScore
+            .toString()
+            .padStart(HUD_SCORE_DISPLAY_DIGITS, '0');
+
+        for (let i = 0; i < HUD_SCORE_DISPLAY_DIGITS; i++) {
+            this.scoreDisplay[i].setTexture(
+                ATLAS_KEY,
+                HUD_DIGIT_MAP[scoreString[i] ?? '0']
+            );
+        }
     }
 
     public setCurrentItem(item: string | null) {
@@ -48,39 +63,132 @@ export class Hud extends Phaser.GameObjects.Image {
         throw new Error('Method not implemented.');
     }
 
-    public updateLoadedEquationElement(newElement: EQUATION_ELEMENT | null) {
-        this.loadedEquationElement.setText(newElement ?? HUD_RELOAD_STRING);
+    public setLoadedEquationElement(
+        newElement: number | EQUATION_OPERATOR | null
+    ) {
+        this.loadedEquationElement.setText(
+            (newElement ?? HUD_NO_ENEMY_STRING).toString()
+        );
     }
 
-    private initLoadedEquationElement() {
+    private initLoadedEquationContainer() {
+        const usableHUDSectionPercent = 0.25;
+        const numberOfIcons = 3;
+        const iconWidth =
+            (this.displayWidth * usableHUDSectionPercent) / numberOfIcons -
+            EQUATION_BACKGROUND_MARGIN;
         this.loadedEquationElement = new Phaser.GameObjects.Text(
             this.scene,
-            GAME_HEIGHT,
+            0,
             0,
             '',
             HUD_LOADED_EQUATION_TEXT_STYLE
         );
 
-        this.loadedEquationElement.setY(
-            this.scene.sys.canvas.height -
-                this.loadedEquationElement.displayHeight -
-                (this.displayHeight - this.loadedEquationElement.displayHeight)
+        const loadedEquationBackgroundSprite = new Phaser.GameObjects.Sprite(
+            this.scene,
+            EQUATION_BACKGROUND_MARGIN / 2,
+            EQUATION_BACKGROUND_MARGIN / 2,
+            ATLAS_KEY,
+            LOADED_EQUATION_BACKGROUND_IMAGE
         );
 
-        this.scene.add.existing(this.loadedEquationElement);
+        loadedEquationBackgroundSprite.setDisplaySize(
+            iconWidth,
+            this.displayHeight - EQUATION_BACKGROUND_MARGIN
+        );
 
-        this.loadedEquationElement.setDepth(LOADED_EQUATION_ELEMENT_DEPTH);
+        this.loadedEquationContainer = new Phaser.GameObjects.Container(
+            this.scene,
+            0,
+            0,
+            [loadedEquationBackgroundSprite, this.loadedEquationElement]
+        );
 
-        this.updateLoadedEquationElement(null);
+        this.loadedEquationContainer.setX(GAME_WIDTH - iconWidth * 3);
+
+        this.loadedEquationContainer.setY(GAME_HEIGHT - this.displayHeight / 2);
+
+        this.scene.add.existing(this.loadedEquationContainer);
+
+        this.loadedEquationContainer.setDepth(LOADED_EQUATION_ELEMENT_DEPTH);
+
+        loadedEquationBackgroundSprite.setInteractive();
+
+        loadedEquationBackgroundSprite.on(POINTER_DOWN_EVENT_KEY, () => {
+            this.loadedEquationElement.setText('');
+            this.scene.add
+                .tween({
+                    targets: loadedEquationBackgroundSprite,
+                    scale: 2,
+                    duration: 500,
+                    yoyo: true,
+                    repeat: 1,
+                    ease: 'Linear',
+                })
+                .setCallback('onUpdate', (tween: Phaser.Tweens.Tween) => {
+                    const percentComplete = tween.totalProgress;
+                    const maxDots = 4;
+                    const dotRepeats = 2;
+
+                    this.loadedEquationElement.setText(
+                        '.'.repeat(
+                            Math.floor(percentComplete * maxDots * dotRepeats) %
+                                maxDots
+                        )
+                    );
+                })
+                .setCallback('onComplete', () => {
+                    this.scene.events.emit(PLAYER_RELOAD_EVENT_KEY);
+                });
+        });
+
+        this.setLoadedEquationElement(null);
     }
 
-    private updateScoreDisplay() {
-        for (let i = 0; i < this.scoreDisplay.length; i++) {
-            this.scoreDisplay[i].setTexture(
-                ATLAS_KEY,
-                HUD_DIGIT_MAP[this.score.toString()[i] ?? '0']
-            );
-        }
+    private initItemContainer() {
+        // TODO implement item functions
+        const usableHUDSectionPercent = 0.25;
+        const numberOfIcons = 3;
+        const iconWidth =
+            (this.displayWidth * usableHUDSectionPercent) / numberOfIcons -
+            EQUATION_BACKGROUND_MARGIN;
+
+        this.itemContainer = new Phaser.GameObjects.Container(this.scene, 0, 0);
+
+        const itemBackgroundSprite = new Phaser.GameObjects.Sprite(
+            this.scene,
+            EQUATION_BACKGROUND_MARGIN / 2,
+            EQUATION_BACKGROUND_MARGIN / 2,
+            ATLAS_KEY,
+            ITEM_EMPTY_BACKGROUND_IMAGE
+        );
+
+        itemBackgroundSprite.setDisplaySize(
+            iconWidth,
+            this.displayHeight - EQUATION_BACKGROUND_MARGIN
+        );
+
+        itemBackgroundSprite.setInteractive();
+
+        itemBackgroundSprite.on(POINTER_DOWN_EVENT_KEY, () => {
+            this.scene.add.tween({
+                targets: itemBackgroundSprite,
+                scale: 2,
+                duration: 500,
+                yoyo: true,
+                repeat: 1,
+                ease: 'Linear',
+            });
+        });
+
+        this.itemContainer.add(itemBackgroundSprite);
+        this.itemContainer.setX(GAME_WIDTH - iconWidth * 2);
+
+        this.itemContainer.setY(GAME_HEIGHT - this.displayHeight / 2);
+
+        this.itemContainer.setDepth(LOADED_EQUATION_ELEMENT_DEPTH);
+        this.scene.add.existing(this.itemContainer);
     }
 
     private initScoreDisplay() {
@@ -111,6 +219,6 @@ export class Hud extends Phaser.GameObjects.Image {
             this.scoreDisplay.push(newDigit);
         }
 
-        this.updateScoreDisplay();
+        this.setScore(0);
     }
 }

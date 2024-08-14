@@ -6,9 +6,6 @@ import { Hud } from '../Class/Hud';
 import {
     BACKGROUND_KEY,
     BASE_ENEMY_DAMAGE,
-    CURRENT_EQUATION_ELEMENT_DISPLAY_X,
-    CURRENT_EQUATION_ELEMENT_DISPLAY_Y,
-    CURRENT_EQUATION_ELEMENT_TEXT_STYLE,
     ENEMY_HIT_PLAYER_EVENT_KEY,
     EQUATION_OPERATOR,
     GAME_CURSOR,
@@ -34,10 +31,10 @@ export class Game extends Scene {
     private player: Player;
     private invisibleEquationElements: (number | EQUATION_OPERATOR)[] = [];
     private currentEquationElement: number | EQUATION_OPERATOR;
-    private currentEquationElementDisplay: Phaser.GameObjects.Text;
     private difficulty: TDifficulty;
     private lastSpawnTime: number;
-    private hud: Phaser.GameObjects.Image;
+    private hud: Hud;
+    private currentScore = 0;
 
     private PATH_NODES: IPathNode[];
 
@@ -93,8 +90,11 @@ export class Game extends Scene {
         this.input.setDefaultCursor(GAME_CURSOR);
 
         this.createEventHandlers();
+    }
 
-        this.displayCurrentEquationElement();
+    private addScore(score: number) {
+        this.currentScore += score;
+        this.hud.setScore(this.currentScore);
     }
 
     private createEventHandlers() {
@@ -109,22 +109,19 @@ export class Game extends Scene {
         this.events.on(
             PLAYER_KILLED_ENEMY_EVENT_KEY,
             (data: { score: number }) => {
-                this.player.addScore(data.score);
-                this.deleteCurrentEquationElement();
+                this.addScore(data.score);
+                this.deleteEquationElement(this.currentEquationElement);
             }
         );
 
         this.events.on(PLAYER_HIT_ENEMY_EVENT_KEY, (enemy: Enemy) => {
+            this.player.animateHit();
             enemy.attemptKill(this.currentEquationElement);
         });
 
         this.events.on(PLAYER_RELOAD_EVENT_KEY, () => {
             this.updateCurrentEquationElement();
         });
-    }
-
-    private deleteCurrentEquationElement() {
-        this.deleteEquationElement(this.currentEquationElement);
     }
 
     private deleteEquationElement(elementToDelete: number | EQUATION_OPERATOR) {
@@ -141,35 +138,13 @@ export class Game extends Scene {
         this.updateCurrentEquationElement();
     }
 
-    // TOOD: MOVE THIS TO HUD?
-    private displayCurrentEquationElement() {
-        this.currentEquationElementDisplay = this.add.text(
-            CURRENT_EQUATION_ELEMENT_DISPLAY_X,
-            CURRENT_EQUATION_ELEMENT_DISPLAY_Y,
-            '',
-            CURRENT_EQUATION_ELEMENT_TEXT_STYLE
-        );
-
-        this.updateEquationElementDisplay();
-    }
-
-    private updateEquationElementDisplay() {
-        this.currentEquationElementDisplay.setText(
-            '' + this.currentEquationElement
-        );
-    }
-
     private updateCurrentEquationElement() {
         this.currentEquationElement =
             this.invisibleEquationElements[
                 (Math.random() * this.invisibleEquationElements.length) | 0
             ];
 
-        if (!this.currentEquationElement) {
-            return;
-        }
-
-        this.updateEquationElementDisplay();
+        this.hud.setLoadedEquationElement(this.currentEquationElement);
     }
 
     private handleSpawns(forceSpawn = false) {

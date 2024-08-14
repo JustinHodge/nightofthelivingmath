@@ -20,6 +20,8 @@ import {
     ENEMY_ANIMATION_FRAME_RATE,
     ANIMATION_INFINITE_REPEAT,
     EQUATION_OPERATOR,
+    POINTER_DOWN_EVENT_KEY,
+    PLAYER_HIT_ENEMY_EVENT_KEY,
 } from '../constants';
 import {
     generateFrameKeys,
@@ -83,6 +85,10 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.setAnimation(this.facingDirection);
         this.setInteractive();
 
+        this.on(POINTER_DOWN_EVENT_KEY, () => {
+            this.scene.events.emit(PLAYER_HIT_ENEMY_EVENT_KEY, this);
+        });
+
         scene.add.existing(this);
     }
 
@@ -139,6 +145,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.scene.events.emit(PLAYER_KILLED_ENEMY_EVENT_KEY, {
                 score: this.getScoreValue(),
             });
+            return true;
         }
 
         return false;

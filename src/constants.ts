@@ -151,10 +151,10 @@ export const HUD_DIGIT_MAP: Record<string, string> = {
     '8': 'UI Elements/Zombie-Tileset---_0509',
     '9': 'UI Elements/Zombie-Tileset---_0510',
 };
-export const HUD_RELOAD_STRING = 'RELOAD!';
+export const HUD_NO_ENEMY_STRING = 'NO ENEMY!';
 export const HUD_LOADED_EQUATION_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextStyle =
     {
-        fontSize: '15px',
+        fontSize: '20px',
         stroke: '#000000',
         strokeThickness: 4,
     };
@@ -219,12 +219,20 @@ export const ENEMY_DATA: IEnemyData = {
                 frameSet: [418],
             },
         },
-        getScoreMultiplier: () => 1,
+        getScoreMultiplier: () => 100,
     },
 };
 
+export const EQUATION_BACKGROUND_MARGIN = 10;
+export const LOADED_EQUATION_BACKGROUND_IMAGE =
+    'Inventory interface/SHOTGUN_SLOT';
+export const ITEM_EMPTY_BACKGROUND_IMAGE = 'Inventory interface/EMPTY_SLOT';
+export const ITEM_HEALTH_KIT_BACKGROUND_IMAGE =
+    'Inventory interface/HEALTH_KIT_SLOT';
+export const ITEM_BOMB_BACKGROUND_IMAGE = 'Inventory interface/GRENADE_SLOT';
+
 // DEPTH LAYERS
-export const PLAYER_SPRITE_DEPTH = 100;
+export const PLAYER_SPRITE_DEPTH = 1700;
 export const PLAYER_HEALTH_ORB_DEPTH = 100;
 export const HUD_DEPTH = 1600;
 export const LOADED_EQUATION_ELEMENT_DEPTH = 1601;
