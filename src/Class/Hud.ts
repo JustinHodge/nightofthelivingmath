@@ -9,7 +9,7 @@ import {
     HUD_DIGIT_MAP,
     HUD_KEY,
     HUD_LOADED_EQUATION_TEXT_STYLE,
-    HUD_RELOAD_STRING,
+    HUD_NO_ENEMY_STRING,
     HUD_SCORE_DISPLAY_DIGIT_PADDING,
     HUD_SCORE_DISPLAY_DIGITS,
     LOADED_EQUATION_BACKGROUND_IMAGE,
@@ -65,7 +65,7 @@ export class Hud extends Phaser.GameObjects.Image {
         newElement: number | EQUATION_OPERATOR | null
     ) {
         this.loadedEquationElement.setText(
-            (newElement ?? HUD_RELOAD_STRING).toString()
+            (newElement ?? HUD_NO_ENEMY_STRING).toString()
         );
     }
 

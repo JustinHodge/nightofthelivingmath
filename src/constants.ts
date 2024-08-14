@@ -151,7 +151,7 @@ export const HUD_DIGIT_MAP: Record<string, string> = {
     '8': 'UI Elements/Zombie-Tileset---_0509',
     '9': 'UI Elements/Zombie-Tileset---_0510',
 };
-export const HUD_RELOAD_STRING = 'RELOAD!';
+export const HUD_NO_ENEMY_STRING = 'NO ENEMY!';
 export const HUD_LOADED_EQUATION_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextStyle =
     {
         fontSize: '20px',
