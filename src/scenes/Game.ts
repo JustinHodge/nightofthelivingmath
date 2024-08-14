@@ -6,9 +6,6 @@ import { Hud } from '../Class/Hud';
 import {
     BACKGROUND_KEY,
     BASE_ENEMY_DAMAGE,
-    CURRENT_EQUATION_ELEMENT_DISPLAY_X,
-    CURRENT_EQUATION_ELEMENT_DISPLAY_Y,
-    CURRENT_EQUATION_ELEMENT_TEXT_STYLE,
     ENEMY_HIT_PLAYER_EVENT_KEY,
     EQUATION_OPERATOR,
     GAME_CURSOR,
@@ -118,6 +115,7 @@ export class Game extends Scene {
         );
 
         this.events.on(PLAYER_HIT_ENEMY_EVENT_KEY, (enemy: Enemy) => {
+            this.player.animateHit();
             enemy.attemptKill(this.currentEquationElement);
         });
 

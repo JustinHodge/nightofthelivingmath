@@ -48,15 +48,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.setHealthOrbs();
 
-        scene.input.on(
-            GAME_OBJECT_DOWN_EVENT_KEY,
-            (pointer: Phaser.Input.Pointer, gameObject: Enemy) => {
-                this.play(PLAYER_HIT_ANIMATION_KEY).chain(
-                    PLAYER_IDLE_ANIMATION_KEY
-                );
-                this.scene.events.emit(PLAYER_HIT_ENEMY_EVENT_KEY, gameObject);
-            }
-        );
+        // scene.input.on(
+        //     GAME_OBJECT_DOWN_EVENT_KEY,
+        //     (pointer: Phaser.Input.Pointer, gameObject: Enemy) => {
+        //         this.play(PLAYER_HIT_ANIMATION_KEY).chain(
+        //             PLAYER_IDLE_ANIMATION_KEY
+        //         );
+        //         this.scene.events.emit(PLAYER_HIT_ENEMY_EVENT_KEY, gameObject);
+        //     }
+        // );
 
         this.createAnims();
         this.play(PLAYER_IDLE_ANIMATION_KEY);
@@ -64,6 +64,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     public isDead() {
         return this.health <= 0;
+    }
+
+    public animateHit() {
+        this.play(PLAYER_HIT_ANIMATION_KEY).chain(PLAYER_IDLE_ANIMATION_KEY);
+    }
+
+    public animateMiss() {
+        this.play(PLAYER_MISS_ANIMATION_KEY).chain(PLAYER_IDLE_ANIMATION_KEY);
     }
 
     public takeDamage(damage: number) {
