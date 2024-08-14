@@ -226,6 +226,10 @@ export const ENEMY_DATA: IEnemyData = {
 export const EQUATION_BACKGROUND_MARGIN = 10;
 export const LOADED_EQUATION_BACKGROUND_IMAGE =
     'Inventory interface/SHOTGUN_SLOT';
+export const ITEM_EMPTY_BACKGROUND_IMAGE = 'Inventory interface/EMPTY_SLOT';
+export const ITEM_HEALTH_KIT_BACKGROUND_IMAGE =
+    'Inventory interface/HEALTH_KIT_SLOT';
+export const ITEM_BOMB_BACKGROUND_IMAGE = 'Inventory interface/GRENADE_SLOT';
 
 // DEPTH LAYERS
 export const PLAYER_SPRITE_DEPTH = 1700;

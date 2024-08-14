@@ -1,4 +1,3 @@
-import { Time } from 'phaser';
 import {
     ATLAS_KEY,
     EQUATION_BACKGROUND_MARGIN,
@@ -12,6 +11,7 @@ import {
     HUD_NO_ENEMY_STRING,
     HUD_SCORE_DISPLAY_DIGIT_PADDING,
     HUD_SCORE_DISPLAY_DIGITS,
+    ITEM_EMPTY_BACKGROUND_IMAGE,
     LOADED_EQUATION_BACKGROUND_IMAGE,
     LOADED_EQUATION_ELEMENT_DEPTH,
     PLAYER_RELOAD_EVENT_KEY,
@@ -24,6 +24,7 @@ export class Hud extends Phaser.GameObjects.Image {
     private scoreDisplay: Phaser.GameObjects.Image[] = [];
     private loadedEquationElement: Phaser.GameObjects.Text;
     private loadedEquationContainer: Phaser.GameObjects.Container;
+    private itemContainer: Phaser.GameObjects.Container;
 
     constructor(scene: Phaser.Scene) {
         super(scene, 0, 0, HUD_KEY);
@@ -35,6 +36,7 @@ export class Hud extends Phaser.GameObjects.Image {
 
         this.initScoreDisplay();
         this.initLoadedEquationContainer();
+        this.initItemContainer();
 
         scene.add.existing(this);
     }
@@ -142,6 +144,51 @@ export class Hud extends Phaser.GameObjects.Image {
         });
 
         this.setLoadedEquationElement(null);
+    }
+
+    private initItemContainer() {
+        // TODO implement item functions
+        const usableHUDSectionPercent = 0.25;
+        const numberOfIcons = 3;
+        const iconWidth =
+            (this.displayWidth * usableHUDSectionPercent) / numberOfIcons -
+            EQUATION_BACKGROUND_MARGIN;
+
+        this.itemContainer = new Phaser.GameObjects.Container(this.scene, 0, 0);
+
+        const itemBackgroundSprite = new Phaser.GameObjects.Sprite(
+            this.scene,
+            EQUATION_BACKGROUND_MARGIN / 2,
+            EQUATION_BACKGROUND_MARGIN / 2,
+            ATLAS_KEY,
+            ITEM_EMPTY_BACKGROUND_IMAGE
+        );
+
+        itemBackgroundSprite.setDisplaySize(
+            iconWidth,
+            this.displayHeight - EQUATION_BACKGROUND_MARGIN
+        );
+
+        itemBackgroundSprite.setInteractive();
+
+        itemBackgroundSprite.on(POINTER_DOWN_EVENT_KEY, () => {
+            this.scene.add.tween({
+                targets: itemBackgroundSprite,
+                scale: 2,
+                duration: 500,
+                yoyo: true,
+                repeat: 1,
+                ease: 'Linear',
+            });
+        });
+
+        this.itemContainer.add(itemBackgroundSprite);
+        this.itemContainer.setX(GAME_WIDTH - iconWidth * 2);
+
+        this.itemContainer.setY(GAME_HEIGHT - this.displayHeight / 2);
+
+        this.itemContainer.setDepth(LOADED_EQUATION_ELEMENT_DEPTH);
+        this.scene.add.existing(this.itemContainer);
     }
 
     private initScoreDisplay() {
