@@ -23,11 +23,12 @@ import {
     POINTER_DOWN_EVENT_KEY,
     PLAYER_HIT_ENEMY_EVENT_KEY,
 } from '../constants';
+
 import {
     generateFrameKeys,
     generateFrameObjects,
 } from '../utils/frameGenerators';
-import { IPathNode } from '../vite-env';
+import { IPathNode, IPlayerKilledEventData } from '../vite-env';
 
 import { Equation } from './Equation';
 
@@ -135,16 +136,21 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     public attemptKill(
-        equationComponent: number | EQUATION_OPERATOR | undefined
+        equationComponent: number | EQUATION_OPERATOR | undefined,
+        forceKill = false
     ) {
         if (
             !this.equation ||
-            this.equation?.getInvisibleElement() === equationComponent
+            this.equation?.getInvisibleElement() === equationComponent ||
+            forceKill
         ) {
             this.kill();
-            this.scene.events.emit(PLAYER_KILLED_ENEMY_EVENT_KEY, {
+            const eventData: IPlayerKilledEventData = {
                 score: this.getScoreValue(),
-            });
+                killPosition: { x: this.x, y: this.y },
+            };
+
+            this.scene.events.emit(PLAYER_KILLED_ENEMY_EVENT_KEY, eventData);
             return true;
         }
 
@@ -192,6 +198,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     private kill() {
         this.isDead = true;
         this.play(ENEMY_DEATH_ANIMATION_KEY);
+
         this.on(
             ANIMATION_COMPLETED_EVENT_KEY,
             () => {

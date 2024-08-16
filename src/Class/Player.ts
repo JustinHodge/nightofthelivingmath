@@ -79,6 +79,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.setHealthOrbs();
     }
 
+    public heal(healingValue: number) {
+        this.health = Math.min(this.health + healingValue, PLAYER_MAX_HEALTH);
+        this.setHealthOrbs();
+    }
+
     private setHealthOrbs() {
         for (const healthOrb of this.healthOrbs) {
             healthOrb.destroy();

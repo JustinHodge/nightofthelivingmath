@@ -11,16 +11,19 @@ import {
     HUD_NO_ENEMY_STRING,
     HUD_SCORE_DISPLAY_DIGIT_PADDING,
     HUD_SCORE_DISPLAY_DIGITS,
+    ITEM_BOMB_BACKGROUND_IMAGE,
     ITEM_EMPTY_BACKGROUND_IMAGE,
+    ITEM_HEALTH_KIT_BACKGROUND_IMAGE,
     LOADED_EQUATION_BACKGROUND_IMAGE,
     LOADED_EQUATION_ELEMENT_DEPTH,
+    PLAYER_BOMB_EVENT_KEY,
+    PLAYER_HEAL_EVENT_KEY,
     PLAYER_RELOAD_EVENT_KEY,
     POINTER_DOWN_EVENT_KEY,
     SCORE_DISPLAY_DEPTH,
 } from '../constants';
 
 export class Hud extends Phaser.GameObjects.Image {
-    private currentItem: string | null = null;
     private scoreDisplay: Phaser.GameObjects.Image[] = [];
     private loadedEquationElement: Phaser.GameObjects.Text;
     private loadedEquationContainer: Phaser.GameObjects.Container;
@@ -55,12 +58,44 @@ export class Hud extends Phaser.GameObjects.Image {
     }
 
     public setCurrentItem(item: string | null) {
-        this.currentItem = item;
-    }
+        const backgroundSprite: Phaser.GameObjects.Sprite =
+            this.itemContainer.getByName('itemBackgroundSprite');
 
-    public animateReload() {
-        // TODO add animation
-        throw new Error('Method not implemented.');
+        if (backgroundSprite.type !== 'Sprite') {
+            throw new Error('Item container is not a sprite');
+        }
+
+        backgroundSprite.off(POINTER_DOWN_EVENT_KEY);
+
+        switch (item) {
+            case 'HEALTH_KIT':
+                backgroundSprite.setTexture(
+                    ATLAS_KEY,
+                    ITEM_HEALTH_KIT_BACKGROUND_IMAGE
+                );
+
+                backgroundSprite.on(POINTER_DOWN_EVENT_KEY, () => {
+                    console.log('usingHealthKit');
+                    this.scene.events.emit(PLAYER_HEAL_EVENT_KEY);
+                });
+                break;
+            case 'DROP_BOMB':
+                backgroundSprite.setTexture(
+                    ATLAS_KEY,
+                    ITEM_BOMB_BACKGROUND_IMAGE
+                );
+                backgroundSprite.on(POINTER_DOWN_EVENT_KEY, () => {
+                    console.log('usingBomb');
+                    this.scene.events.emit(PLAYER_BOMB_EVENT_KEY);
+                });
+                break;
+            default:
+                backgroundSprite.setTexture(
+                    ATLAS_KEY,
+                    ITEM_EMPTY_BACKGROUND_IMAGE
+                );
+                backgroundSprite.on(POINTER_DOWN_EVENT_KEY, () => {});
+        }
     }
 
     public setLoadedEquationElement(
@@ -72,14 +107,14 @@ export class Hud extends Phaser.GameObjects.Image {
     }
 
     private initLoadedEquationContainer() {
-        const usableHUDSectionPercent = 0.25;
+        const usableHUDSectionPercent = 0.26;
         const numberOfIcons = 3;
         const iconWidth =
             (this.displayWidth * usableHUDSectionPercent) / numberOfIcons -
             EQUATION_BACKGROUND_MARGIN;
         this.loadedEquationElement = new Phaser.GameObjects.Text(
             this.scene,
-            0,
+            -45,
             0,
             '',
             HUD_LOADED_EQUATION_TEXT_STYLE
@@ -87,7 +122,7 @@ export class Hud extends Phaser.GameObjects.Image {
 
         const loadedEquationBackgroundSprite = new Phaser.GameObjects.Sprite(
             this.scene,
-            EQUATION_BACKGROUND_MARGIN / 2,
+            -10,
             EQUATION_BACKGROUND_MARGIN / 2,
             ATLAS_KEY,
             LOADED_EQUATION_BACKGROUND_IMAGE
@@ -147,7 +182,6 @@ export class Hud extends Phaser.GameObjects.Image {
     }
 
     private initItemContainer() {
-        // TODO implement item functions
         const usableHUDSectionPercent = 0.25;
         const numberOfIcons = 3;
         const iconWidth =
@@ -164,23 +198,14 @@ export class Hud extends Phaser.GameObjects.Image {
             ITEM_EMPTY_BACKGROUND_IMAGE
         );
 
+        itemBackgroundSprite.setName('itemBackgroundSprite');
+
         itemBackgroundSprite.setDisplaySize(
             iconWidth,
             this.displayHeight - EQUATION_BACKGROUND_MARGIN
         );
 
         itemBackgroundSprite.setInteractive();
-
-        itemBackgroundSprite.on(POINTER_DOWN_EVENT_KEY, () => {
-            this.scene.add.tween({
-                targets: itemBackgroundSprite,
-                scale: 2,
-                duration: 500,
-                yoyo: true,
-                repeat: 1,
-                ease: 'Linear',
-            });
-        });
 
         this.itemContainer.add(itemBackgroundSprite);
         this.itemContainer.setX(GAME_WIDTH - iconWidth * 2);
