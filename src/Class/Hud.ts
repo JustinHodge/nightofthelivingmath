@@ -98,12 +98,8 @@ export class Hud extends Phaser.GameObjects.Image {
         }
     }
 
-    public setLoadedEquationElement(
-        newElement: number | EQUATION_OPERATOR | null
-    ) {
-        this.loadedEquationElement.setText(
-            (newElement ?? HUD_NO_ENEMY_STRING).toString()
-        );
+    public setLoadedEquationElement(newElement: string | null) {
+        this.loadedEquationElement.setText(newElement ?? HUD_NO_ENEMY_STRING);
     }
 
     private initLoadedEquationContainer() {

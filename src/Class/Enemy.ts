@@ -128,22 +128,18 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         if (this.path.length <= 0 && !this.isDead) {
             this.kill();
-            this.scene.events.emit(
-                ENEMY_HIT_PLAYER_EVENT_KEY,
-                this.equation?.getInvisibleElement()
-            );
+            this.scene.events.emit(ENEMY_HIT_PLAYER_EVENT_KEY);
         }
     }
 
-    public attemptKill(
-        equationComponent: number | EQUATION_OPERATOR | undefined,
-        forceKill = false
-    ) {
-        if (
-            !this.equation ||
-            this.equation?.getInvisibleElement() === equationComponent ||
-            forceKill
-        ) {
+    public getPlayerTarget() {
+        return this.equation?.getPlayerString() || null;
+    }
+
+    public attemptKill(targetEnemy: Enemy) {
+        const killIsSuccessful = this === targetEnemy;
+
+        if (killIsSuccessful) {
             this.kill();
             const eventData: IPlayerKilledEventData = {
                 score: this.getScoreValue(),
@@ -151,17 +147,16 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
             };
 
             this.scene.events.emit(PLAYER_KILLED_ENEMY_EVENT_KEY, eventData);
-            return true;
         }
 
-        return false;
+        return killIsSuccessful;
     }
 
     private buildSpeechBubble() {
         const bubbleX = this.x - this.width / 2;
         const bubbleY = this.y - this.height / 2;
 
-        const enemySpeechBubbleText = this.equation?.getVisibleEquation() ?? '';
+        const enemySpeechBubbleText = this.equation?.getEnemyString() ?? '';
 
         this.speechBubble = this.scene.add.text(
             bubbleX,
