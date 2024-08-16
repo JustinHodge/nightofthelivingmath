@@ -15,6 +15,7 @@ export class GameOver extends Scene {
 
         this.background = this.add.image(512, 384, 'background');
         this.background.setAlpha(0.5);
+        this.input.setDefaultCursor('auto');
 
         this.gameover_text = this.add.text(
             512,

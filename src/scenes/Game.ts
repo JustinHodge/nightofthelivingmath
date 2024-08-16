@@ -241,8 +241,8 @@ export class Game extends Scene {
         const secondsSinceLastSpawn = elapsedMillis / MILLIS_IN_SECOND;
         const difficultyModifier = 2 / this.difficulty.difficultyNumber;
         const maxTimeSinceLastSpawn = Math.max(
-            3 * difficultyModifier - secondsSinceStart / 30,
-            2
+            3 * difficultyModifier - secondsSinceStart / 20,
+            1
         );
 
         const isNoCurrentEnemies = this.enemies.length < 1;

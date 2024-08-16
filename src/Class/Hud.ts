@@ -75,7 +75,6 @@ export class Hud extends Phaser.GameObjects.Image {
                 );
 
                 backgroundSprite.on(POINTER_DOWN_EVENT_KEY, () => {
-                    console.log('usingHealthKit');
                     this.scene.events.emit(PLAYER_HEAL_EVENT_KEY);
                 });
                 break;
@@ -85,7 +84,6 @@ export class Hud extends Phaser.GameObjects.Image {
                     ITEM_BOMB_BACKGROUND_IMAGE
                 );
                 backgroundSprite.on(POINTER_DOWN_EVENT_KEY, () => {
-                    console.log('usingBomb');
                     this.scene.events.emit(PLAYER_BOMB_EVENT_KEY);
                 });
                 break;
