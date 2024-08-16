@@ -207,7 +207,7 @@ export const ENEMY_DATA: IEnemyData = {
             },
             [ENEMY_FACING_DIRECTIONS.up]: {
                 prefix: 'Big Zombie Walking Animation Frames/Zombie-Tileset---_',
-                digitsInFrame: 3,
+                digitsInFrame: 4,
                 frameSet: [418, 419, 420],
             },
             [ENEMY_FACING_DIRECTIONS.death]: {
@@ -218,7 +218,7 @@ export const ENEMY_DATA: IEnemyData = {
             [ENEMY_FACING_DIRECTIONS.idle]: {
                 prefix: 'Big Zombie Walking Animation Frames/Zombie-Tileset---_',
                 digitsInFrame: 4,
-                frameSet: [418],
+                frameSet: [412, 415, 418, 421],
             },
         },
         getScoreMultiplier: () => 100,
@@ -232,6 +232,10 @@ export const ITEM_EMPTY_BACKGROUND_IMAGE = 'Inventory interface/EMPTY_SLOT';
 export const ITEM_HEALTH_KIT_BACKGROUND_IMAGE =
     'Inventory interface/HEALTH_KIT_SLOT';
 export const ITEM_BOMB_BACKGROUND_IMAGE = 'Inventory interface/GRENADE_SLOT';
+export const DROP_BOMB_IMAGE =
+    'Pickable Items and Weapons/Zombie-Tileset---_0328';
+export const DROP_HEALTH_KIT_IMAGE =
+    'Pickable Items and Weapons/Zombie-Tileset---_0340';
 
 // DEPTH LAYERS
 export const PLAYER_SPRITE_DEPTH = 1700;
@@ -265,6 +269,7 @@ export const ENEMY_HIT_PLAYER_EVENT_KEY = 'enemyHitPlayer';
 export const PLAYER_KILLED_ENEMY_EVENT_KEY = 'playerKilledEnemy';
 export const PLAYER_HIT_ENEMY_EVENT_KEY = 'playerHitEnemy';
 export const PLAYER_RELOAD_EVENT_KEY = 'playerReload';
+export const PLAYER_PICKED_UP_DROP_EVENT_KEY = 'playerPickedUpDrop';
 
 // SCENE KEYS
 export const PRELOADER_SCENE_KEY = 'Preloader';

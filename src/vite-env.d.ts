@@ -35,3 +35,13 @@ export interface IAnimationFrameData {
     digitsInFrame: number;
     frameSet: number[];
 }
+
+export interface ICoordinate {
+    x: number;
+    y: number;
+}
+
+export interface IPlayerKilledEventData {
+    score: number;
+    killPosition: ICoordinate;
+}
