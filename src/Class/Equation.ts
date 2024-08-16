@@ -87,19 +87,21 @@ export class Equation {
         this[this.hiddenComponent].visible = false;
     }
 
-    private buildPlayerString() {
-        this.playerString = this[this.hiddenComponent].value.toString();
+    private buildEnemyString() {
+        this.enemyString = this[this.hiddenComponent].value.toString();
     }
 
-    private buildEnemyString() {
-        this.enemyString += this[EQUATION_ELEMENT.operand1].visible
+    private buildPlayerString() {
+        this.playerString += this[EQUATION_ELEMENT.operand1].visible
             ? this[EQUATION_ELEMENT.operand1].value
             : ' ? ';
-        this.enemyString += this.operator.visible ? this.operator.value : ' ? ';
-        this.enemyString += this[EQUATION_ELEMENT.operand2].visible
+        this.playerString += this.operator.visible
+            ? this.operator.value
+            : ' ? ';
+        this.playerString += this[EQUATION_ELEMENT.operand2].visible
             ? this[EQUATION_ELEMENT.operand2].value
             : ' ? ';
-        this.enemyString += '=';
-        this.enemyString += this.result.visible ? this.result.value : ' ? ';
+        this.playerString += '=';
+        this.playerString += this.result.visible ? this.result.value : ' ? ';
     }
 }
