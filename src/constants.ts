@@ -157,7 +157,9 @@ export const HUD_LOADED_EQUATION_TEXT_STYLE: Phaser.Types.GameObjects.Text.TextS
         fontSize: '20px',
         stroke: '#000000',
         strokeThickness: 4,
+        align: 'left',
     };
+
 export const HUD_SCORE_DISPLAY_DIGITS = 6;
 export const HUD_SCORE_DISPLAY_DIGIT_PADDING = 10;
 

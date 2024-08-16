@@ -72,14 +72,14 @@ export class Hud extends Phaser.GameObjects.Image {
     }
 
     private initLoadedEquationContainer() {
-        const usableHUDSectionPercent = 0.25;
+        const usableHUDSectionPercent = 0.26;
         const numberOfIcons = 3;
         const iconWidth =
             (this.displayWidth * usableHUDSectionPercent) / numberOfIcons -
             EQUATION_BACKGROUND_MARGIN;
         this.loadedEquationElement = new Phaser.GameObjects.Text(
             this.scene,
-            0,
+            -45,
             0,
             '',
             HUD_LOADED_EQUATION_TEXT_STYLE
@@ -87,7 +87,7 @@ export class Hud extends Phaser.GameObjects.Image {
 
         const loadedEquationBackgroundSprite = new Phaser.GameObjects.Sprite(
             this.scene,
-            EQUATION_BACKGROUND_MARGIN / 2,
+            -10,
             EQUATION_BACKGROUND_MARGIN / 2,
             ATLAS_KEY,
             LOADED_EQUATION_BACKGROUND_IMAGE
