@@ -99,6 +99,7 @@ export class Hud extends Phaser.GameObjects.Image {
     }
 
     public setLoadedEquationElement(newElement: string | null) {
+        // TODO fix this. displays poorly
         this.loadedEquationElement.setText(newElement ?? HUD_NO_ENEMY_STRING);
     }
 
