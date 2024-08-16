@@ -270,6 +270,8 @@ export const PLAYER_KILLED_ENEMY_EVENT_KEY = 'playerKilledEnemy';
 export const PLAYER_HIT_ENEMY_EVENT_KEY = 'playerHitEnemy';
 export const PLAYER_RELOAD_EVENT_KEY = 'playerReload';
 export const PLAYER_PICKED_UP_DROP_EVENT_KEY = 'playerPickedUpDrop';
+export const PLAYER_HEAL_EVENT_KEY = 'playerHeal';
+export const PLAYER_BOMB_EVENT_KEY = 'playerBomb';
 
 // SCENE KEYS
 export const PRELOADER_SCENE_KEY = 'Preloader';

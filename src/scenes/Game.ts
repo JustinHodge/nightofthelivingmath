@@ -15,8 +15,11 @@ import {
     GAME_SCENE_KEY,
     MAP_NODES_KEY,
     MILLIS_IN_SECOND,
+    PLAYER_BOMB_EVENT_KEY,
+    PLAYER_HEAL_EVENT_KEY,
     PLAYER_HIT_ENEMY_EVENT_KEY,
     PLAYER_KILLED_ENEMY_EVENT_KEY,
+    PLAYER_PICKED_UP_DROP_EVENT_KEY,
     PLAYER_RELOAD_EVENT_KEY,
     REGISTRY_DIFFICULTY_KEY,
 } from '../constants';
@@ -126,6 +129,25 @@ export class Game extends Scene {
 
         this.events.on(PLAYER_RELOAD_EVENT_KEY, () => {
             this.updateCurrentEquationElement();
+        });
+
+        this.events.on(
+            PLAYER_PICKED_UP_DROP_EVENT_KEY,
+            ({ drop }: { drop: string }) => {
+                this.hud.setCurrentItem(drop);
+            }
+        );
+
+        this.events.on(PLAYER_HEAL_EVENT_KEY, () => {
+            this.player.heal(4);
+            this.hud.setCurrentItem(null);
+        });
+
+        this.events.on(PLAYER_BOMB_EVENT_KEY, () => {
+            for (const enemy of this.enemies) {
+                enemy.attemptKill(undefined, true);
+            }
+            this.hud.setCurrentItem(null);
         });
     }
 

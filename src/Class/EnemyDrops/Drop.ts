@@ -76,7 +76,9 @@ export class Drop {
 
         drop.setInteractive();
         drop.addListener(POINTER_DOWN_EVENT_KEY, () => {
-            this.scene.events.emit(PLAYER_PICKED_UP_DROP_EVENT_KEY, drop);
+            this.scene.events.emit(PLAYER_PICKED_UP_DROP_EVENT_KEY, {
+                drop: dropKey,
+            });
             drop.destroy();
         });
 

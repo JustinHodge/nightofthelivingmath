@@ -136,11 +136,13 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     public attemptKill(
-        equationComponent: number | EQUATION_OPERATOR | undefined
+        equationComponent: number | EQUATION_OPERATOR | undefined,
+        forceKill = false
     ) {
         if (
             !this.equation ||
-            this.equation?.getInvisibleElement() === equationComponent
+            this.equation?.getInvisibleElement() === equationComponent ||
+            forceKill
         ) {
             this.kill();
             const eventData: IPlayerKilledEventData = {
