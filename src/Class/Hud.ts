@@ -97,16 +97,14 @@ export class Hud extends Phaser.GameObjects.Image {
     }
 
     public setLoadedEquationElement(newElement: string | null) {
-        // TODO fix this. displays poorly
         this.loadedEquationElement.setText(newElement ?? HUD_NO_ENEMY_STRING);
     }
 
     private initLoadedEquationContainer() {
-        const usableHUDSectionPercent = 0.26;
-        const numberOfIcons = 3;
+        const usableHUDSectionPercent = 0.22;
+        const numberOfIcons = 2;
         const iconWidth =
-            (this.displayWidth * usableHUDSectionPercent) / numberOfIcons -
-            EQUATION_BACKGROUND_MARGIN;
+            (this.displayWidth * usableHUDSectionPercent) / numberOfIcons;
         this.loadedEquationElement = new Phaser.GameObjects.Text(
             this.scene,
             -45,
@@ -115,10 +113,12 @@ export class Hud extends Phaser.GameObjects.Image {
             HUD_LOADED_EQUATION_TEXT_STYLE
         );
 
+        this.loadedEquationElement.setOrigin(0, 0);
+
         const loadedEquationBackgroundSprite = new Phaser.GameObjects.Sprite(
             this.scene,
-            -10,
-            EQUATION_BACKGROUND_MARGIN / 2,
+            0,
+            0,
             ATLAS_KEY,
             LOADED_EQUATION_BACKGROUND_IMAGE
         );
@@ -135,9 +135,13 @@ export class Hud extends Phaser.GameObjects.Image {
             [loadedEquationBackgroundSprite, this.loadedEquationElement]
         );
 
-        this.loadedEquationContainer.setX(GAME_WIDTH - iconWidth * 3);
+        this.loadedEquationContainer.setX(this.displayWidth - iconWidth * 2);
 
-        this.loadedEquationContainer.setY(GAME_HEIGHT - this.displayHeight / 2);
+        this.loadedEquationContainer.setY(
+            GAME_HEIGHT -
+                this.displayHeight / 2 +
+                EQUATION_BACKGROUND_MARGIN / 2
+        );
 
         this.scene.add.existing(this.loadedEquationContainer);
 
@@ -177,8 +181,8 @@ export class Hud extends Phaser.GameObjects.Image {
     }
 
     private initItemContainer() {
-        const usableHUDSectionPercent = 0.25;
-        const numberOfIcons = 3;
+        const usableHUDSectionPercent = 0.22;
+        const numberOfIcons = 2;
         const iconWidth =
             (this.displayWidth * usableHUDSectionPercent) / numberOfIcons -
             EQUATION_BACKGROUND_MARGIN;
@@ -203,7 +207,7 @@ export class Hud extends Phaser.GameObjects.Image {
         itemBackgroundSprite.setInteractive();
 
         this.itemContainer.add(itemBackgroundSprite);
-        this.itemContainer.setX(GAME_WIDTH - iconWidth * 2);
+        this.itemContainer.setX(GAME_WIDTH - iconWidth);
 
         this.itemContainer.setY(GAME_HEIGHT - this.displayHeight / 2);
 

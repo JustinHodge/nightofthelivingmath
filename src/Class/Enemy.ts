@@ -19,7 +19,6 @@ import {
     UP_FACING_ANGLES,
     ENEMY_ANIMATION_FRAME_RATE,
     ANIMATION_INFINITE_REPEAT,
-    EQUATION_OPERATOR,
     POINTER_DOWN_EVENT_KEY,
     PLAYER_HIT_ENEMY_EVENT_KEY,
 } from '../constants';
@@ -51,6 +50,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     private equation: Equation | undefined;
     private isDead = false;
     private enemyType: ENEMY_TYPES = ENEMY_TYPES.bigZombie;
+    private movementSpeed: number;
 
     constructor({ scene, path, equation }: IConfig) {
         if (path.length < 1) {
@@ -76,6 +76,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         scene.physics.world.enableBody(this, 0);
 
         this.createAnims();
+
+        this.movementSpeed = Math.floor(Math.random() * 25) + 50;
 
         this.equation = equation;
         this.buildSpeechBubble();
@@ -186,7 +188,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
 
         const { x: targetX, y: targetY } = this.getNextPathNode();
-        this.scene.physics.moveTo(this, targetX, targetY);
+        this.scene.physics.moveTo(this, targetX, targetY, this.movementSpeed);
         this.updateNextPathNode();
     }
 
