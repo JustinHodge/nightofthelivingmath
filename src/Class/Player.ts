@@ -92,7 +92,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.healthOrbs = [];
 
         for (let i = 0; i < Math.ceil(PLAYER_MAX_HEALTH / 4); i++) {
-            // TODO: This can likely be done smarter
             const healthInThisOrb = this.health - i * 4;
             const imageNumber =
                 healthInThisOrb >= 0

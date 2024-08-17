@@ -4,14 +4,17 @@ import { Player } from '../Class/Player';
 import { Equation } from '../Class/Equation';
 import { Hud } from '../Class/Hud';
 import {
+    ATLAS_KEY,
     BACKGROUND_KEY,
     BASE_ENEMY_DAMAGE,
     ENEMY_HIT_PLAYER_EVENT_KEY,
     GAME_CURSOR,
+    GAME_HEIGHT,
     GAME_MIDDLE_X,
     GAME_MIDDLE_Y,
     GAME_OVER_SCENE_KEY,
     GAME_SCENE_KEY,
+    GAME_WIDTH,
     MAP_NODES_KEY,
     MILLIS_IN_SECOND,
     PLAYER_BOMB_EVENT_KEY,
@@ -20,6 +23,10 @@ import {
     PLAYER_KILLED_ENEMY_EVENT_KEY,
     PLAYER_PICKED_UP_DROP_EVENT_KEY,
     PLAYER_RELOAD_EVENT_KEY,
+    PLAYER_SPRITE_ATLAS_KEY,
+    PLAYER_SPRITE_DEPTH,
+    PLAYER_SPRITE_HIT_FRAME,
+    PLAYER_SPRITE_SCALE,
     REGISTRY_DIFFICULTY_KEY,
 } from '../constants';
 import { TDifficulty, IPathNode, IPlayerKilledEventData } from '../vite-env';
@@ -108,7 +115,7 @@ export class Game extends Scene {
         this.player.setActive(false);
         this.player.setVisible(false);
 
-        const countdownSeconds = 3;
+        const countdownSeconds = 5;
         for (let i = 0; i <= countdownSeconds; i++) {
             if (i >= countdownSeconds) {
                 this.time.addEvent({
@@ -127,8 +134,11 @@ export class Game extends Scene {
                 delay: i * MILLIS_IN_SECOND,
                 callback: () => {
                     gameStartingText.setText(
-                        `GET READY... ${countdownSeconds - i}`
+                        `GET READY... ${countdownSeconds - i}
+                        }`
                     );
+
+                    this.updateTargetEnemy();
                 },
             });
         }
@@ -203,6 +213,10 @@ export class Game extends Scene {
     private updateTargetEnemy() {
         this.targetEnemy =
             this.enemies[Math.floor(Math.random() * this.enemies.length)];
+
+        if (!this.targetEnemy) {
+            return;
+        }
 
         this.hud.setLoadedEquationElement(this.targetEnemy.getPlayerTarget());
     }

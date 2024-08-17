@@ -27,8 +27,6 @@ export enum EQUATION_OPERATOR {
     division = '/',
 }
 
-// TODO: label and separate constants
-
 export const ASSETS_PATH = 'assets';
 export const ASSETS_URL = `/${ASSETS_PATH}`;
 
