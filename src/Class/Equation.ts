@@ -23,7 +23,8 @@ export class Equation {
         visible: boolean;
     };
 
-    private visibleString: string = '';
+    private enemyString: string = '';
+    private playerString: string = '';
     private hiddenComponent: EQUATION_ELEMENT =
         EQUATION_DEFAULT_HIDDEN_COMPONENT;
 
@@ -31,12 +32,12 @@ export class Equation {
         this.generateEquation(difficulty);
     }
 
-    public getVisibleEquation() {
-        return this.visibleString;
+    public getEnemyString() {
+        return this.enemyString;
     }
 
-    public getInvisibleElement(): number | EQUATION_OPERATOR {
-        return this[this.hiddenComponent].value;
+    public getPlayerString() {
+        return this.playerString;
     }
 
     private generateEquation(difficulty: TDifficulty) {
@@ -72,25 +73,35 @@ export class Equation {
             };
         }
 
+        this.hideElement(difficulty);
+
+        this.buildPlayerString();
+
+        this.buildEnemyString();
+    }
+
+    private hideElement(difficulty: TDifficulty) {
         const hidableElements = difficulty.hidableElements;
         this.hiddenComponent =
             hidableElements[Math.floor(Math.random() * hidableElements.length)];
         this[this.hiddenComponent].visible = false;
-
-        this.buildVisibleString();
     }
 
-    private buildVisibleString() {
-        this.visibleString += this[EQUATION_ELEMENT.operand1].visible
+    private buildEnemyString() {
+        this.enemyString = this[this.hiddenComponent].value.toString();
+    }
+
+    private buildPlayerString() {
+        this.playerString += this[EQUATION_ELEMENT.operand1].visible
             ? this[EQUATION_ELEMENT.operand1].value
             : ' ? ';
-        this.visibleString += this.operator.visible
+        this.playerString += this.operator.visible
             ? this.operator.value
             : ' ? ';
-        this.visibleString += this[EQUATION_ELEMENT.operand2].visible
+        this.playerString += this[EQUATION_ELEMENT.operand2].visible
             ? this[EQUATION_ELEMENT.operand2].value
             : ' ? ';
-        this.visibleString += '=';
-        this.visibleString += this.result.visible ? this.result.value : ' ? ';
+        this.playerString += '=';
+        this.playerString += this.result.visible ? this.result.value : ' ? ';
     }
 }
