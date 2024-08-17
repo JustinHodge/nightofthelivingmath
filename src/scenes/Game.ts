@@ -150,6 +150,7 @@ export class Game extends Scene {
     private createEventHandlers() {
         this.events.on(ENEMY_HIT_PLAYER_EVENT_KEY, () => {
             this.player.takeDamage(BASE_ENEMY_DAMAGE);
+            this.updateTargetEnemy();
         });
 
         this.events.on(
