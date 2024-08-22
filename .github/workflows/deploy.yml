@@ -58,6 +58,6 @@ jobs:
                   key: ${{ secrets.SSH_KEY }}
                   username: ${{ secrets.SSH_USER }}
                   script: |
-                      sudo mkdir -p var/www/nightofthelivingmath
+                      mkdir -p var/www/nightofthelivingmath
                       cd /var/www/nightofthelivingmath
                       git clone -b deploy --single-branch git@github.com:JustinHodge/nightofthelivingmath.git
