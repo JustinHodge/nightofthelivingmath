@@ -42,8 +42,10 @@ jobs:
                   name: production-files
                   path: ./dist
 
-            - name: Deploy to GitHub Pages
-              uses: peaceiris/actions-gh-pages@v3
+            - name: Deploy to DigitalOcean
+              uses: appleboy/ssh-action@v1.0.3
               with:
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: ./dist
+                  host: ${{ secrets.SSH_HOST }}
+                  username: ${{ secrets.SSH_KEY }}
+                  password: ${{ secrets.SSH_USER }}
+                  script: ./deploy.sh
