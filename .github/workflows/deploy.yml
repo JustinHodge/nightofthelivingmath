@@ -48,4 +48,7 @@ jobs:
                   host: ${{ secrets.SSH_HOST }}
                   key: ${{ secrets.SSH_KEY }}
                   username: ${{ secrets.SSH_USER }}
-                  script: ./deploy.sh
+                  script: |
+                      mkdir var/html/www/nightofthelivingmath
+                      cd var/html/www/nightofthelivingmath
+                      git clone -b deploy --single-branch git@github.com:JustinHodge/nightofthelivingmath.git
